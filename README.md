@@ -4,10 +4,6 @@ Backup and restore your database and volume assets across environments from the 
 
 ![Craft Sync Logo](resources/img/plugin-logo.png)
 
-## Beta 🚨
-
-This plugin is in beta. Please provide and feedback or suggestions to [timmy@weareferal.com](mailto:timmy@weareferal.com) (or find me on Discord, username `timmy`).
-
 ## Requirements
 
 - Craft CMS 3 or later on Linux or MacOS (untested on Windows as of yet)
