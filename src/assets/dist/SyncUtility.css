@@ -1,0 +1,32 @@
+.sync-utility-section {
+    margin-bottom: 50px;
+}
+
+.sync-utility-section > div{
+    padding-left: 25px;
+}
+
+.sync-utility-submit {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+}
+
+    .sync-utility-submit .utility-status {
+        width: 100px;
+        margin-left: 20px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .sync-utility-submit .utility-status .progressbar {
+        width: 20%;
+        left: auto;
+        top: auto;
+    }
+
+.sync-utility-form select {
+    min-width: 200px;
+}

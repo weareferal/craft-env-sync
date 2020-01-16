@@ -1,0 +1,99 @@
+{% import "_includes/forms" as forms %}
+
+{% macro configWarning(setting) -%}
+    {% set setting = '<code>'~setting~'</code>' %}
+    {{ "This is being overridden by the {setting} config setting in your {file} config file."|t('sync', {
+        setting: setting,
+        file: 'sync.php'
+    })|raw }}
+{%- endmacro %}
+
+{% from _self import configWarning %}
+
+{{ forms.selectField({
+    first: true,
+    label: "Cloud Provider"|t('sync'),
+    id: 'cloudProvider',
+    name: 'cloudProvider',
+    options: [
+        { label: 'Amazon S3', value: 's3' }
+    ],
+    value: settings.cloudProvider,
+    required: true,
+    errors: settings.getErrors('cloudProvider')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "S3 Access Key"|t('sync'),
+    instructions: "The access key associated with your IAM user"|t('sync'),
+    name: 's3AccessKey',
+    id: 's3AccessKey',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: settings.s3AccessKey,
+    required: (settings.s3AccessKey == 's3'),
+    type: 'password',
+    errors: settings.getErrors('s3AccessKey')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "S3 Secret Key",
+    instructions: "The secret key associated with your IAM user"|t('sync'),
+    name: 's3SecretKey',
+    id: 's3SecretKey',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: settings.s3SecretKey,
+    required: (settings.s3SecretKey == 's3'),
+    type: 'password',
+    errors: settings.getErrors('s3SecretKey')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "S3 Bucket Name"|t('sync'),
+    instructions: "The name of the S3 bucket you want to sync backups to"|t('sync'),
+    name: 's3BucketName',
+    id: 's3BucketName',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: settings.s3BucketName,
+    placeholder: "my-craft-backups",
+    required: (settings.s3BucketName == 's3'),
+    errors: settings.getErrors('s3BucketName')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "S3 Region Name"|t('sync'),
+    instructions: "The AWS region your S3 bucket is in"|t('sync'),
+    name: 's3RegionName',
+    id: 's3RegionName',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: settings.s3RegionName,
+    placeholder: "us-west-2",
+    required: (settings.s3RegionName == 's3'),
+    errors: settings.getErrors('s3RegionName')
+}) }}
+
+{{ forms.autosuggestField({
+    label: "S3 Bucket Prefix"|t('sync'),
+    instructions: "A path within your S3 bucket to prefix your backups with. Do not include a leading or trailing slash"|t('sync'),
+    name: 's3BucketPrefix',
+    id: 's3BucketPrefix',
+    suggestEnvVars: true,
+    suggestAliases: true,
+    value: settings.s3BucketPrefix,
+    placeholder: "craft-backups/my-site",
+    errors: settings.getErrors('s3BucketPrefix')
+}) }}
+
+<hr>
+
+{{ forms.lightswitchField({
+    label: "Use Queue"|t('sync'),
+    instructions: "Whether or not to use the Craft 3 queue"|t('sync'),
+    name: 'useQueue',
+    id: 'useQueue',
+    on: settings.useQueue,
+    errors: settings.getErrors('useQueue')
+}) }}
