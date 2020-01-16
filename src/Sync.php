@@ -76,7 +76,7 @@ class Sync extends Plugin
 
         Craft::info(
             Craft::t(
-                'weareferal-sync',
+                'env-sync',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
@@ -92,7 +92,7 @@ class Sync extends Plugin
     protected function settingsHtml(): string
     {
         return Craft::$app->getView()->renderTemplate(
-            'sync/settings',
+            'env-sync/settings',
             [
                 'settings' => $this->getSettings()
             ]

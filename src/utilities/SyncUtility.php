@@ -50,7 +50,7 @@
             $dbBackupOptions = Sync::getInstance()->sync->getDbBackupOptions();
             $volumeBackupOptions = Sync::getInstance()->sync->getVolumeBackupOptions();
 
-            return $view->renderTemplate('sync/_components/utilities/sync', [
+            return $view->renderTemplate('env-sync/_components/utilities/sync', [
                 "settingConfigured"=>Sync::getInstance()->getSettings()->isConfigured(),
                 "dbBackupOptions"=>$dbBackupOptions,
                 "volumes"=> Craft::$app->getVolumes()->getAllVolumes(),

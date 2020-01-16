@@ -34,7 +34,7 @@
     },
     "extra": {
         "name": "Sync",
-        "handle": "weareferal-sync",
+        "handle": "env-sync",
         "hasCpSettings": true,
         "hasCpSection": false,
         "changelogUrl": "https://raw.githubusercontent.com/weareferal/craft-sync/master/CHANGELOG.md",
