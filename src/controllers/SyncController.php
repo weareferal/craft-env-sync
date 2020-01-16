@@ -24,7 +24,7 @@ class SyncController extends Controller
             Sync::getInstance()->sync->createVolumesBackup();
         } catch (\Throwable $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error creating volume backup'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error creating volume backup'));
         }
     
         return $this->asJson([
@@ -47,7 +47,7 @@ class SyncController extends Controller
             
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error pushing database'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error pushing database'));
         }
 
         return $this->asJson([
@@ -69,7 +69,7 @@ class SyncController extends Controller
             }
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error pulling database'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error pulling database'));
         }
     
         return $this->asJson([
@@ -91,7 +91,7 @@ class SyncController extends Controller
             }
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error pushing volume'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error pushing volume'));
         }
     
         return $this->asJson([
@@ -113,7 +113,7 @@ class SyncController extends Controller
             }
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error pulling volume'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error pulling volume'));
         }
     
         return $this->asJson([
@@ -128,7 +128,7 @@ class SyncController extends Controller
             Sync::getInstance()->sync->restoreDatabaseBackup($databaseName);
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error restoring database'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error restoring database'));
         }
     
         return $this->asJson([
@@ -147,7 +147,7 @@ class SyncController extends Controller
             Sync::getInstance()->sync->restoreVolumesBackup($volumeName);
         } catch (Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            return $this->asErrorJson(Craft::t('sync', 'Error restoring assets'));
+            return $this->asErrorJson(Craft::t('weareferal-sync', 'Error restoring assets'));
         }
     
         return $this->asJson([

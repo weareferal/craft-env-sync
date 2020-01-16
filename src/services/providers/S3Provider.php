@@ -84,10 +84,10 @@ class S3Service extends SyncService implements Syncable {
                                     'SaveAs' => $path
                                 ]);
                             } else {
-                                Craft::info("Skipping '" . $key . "' as file already exists locally", "craft-sync");
+                                Craft::info("Skipping '" . $key . "' as file already exists locally", "weareferal-sync");
                             }
                         } else {
-                            Craft::info("Skipping '" . $key . "' as extension doesn't match", "craft-sync");
+                            Craft::info("Skipping '" . $key . "' as extension doesn't match", "weareferal-sync");
                         }
                         
                     }

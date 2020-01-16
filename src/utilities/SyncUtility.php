@@ -22,7 +22,6 @@
 
         public static function iconPath()
         {
-            Craft::info('craft-sync:' .Sync::getInstance()->getBasePath() . DIRECTORY_SEPARATOR . 'utility-icon.svg');
             return Sync::getInstance()->getBasePath() . DIRECTORY_SEPARATOR . 'utility-icon.svg';
         }
 

@@ -76,7 +76,7 @@ class Sync extends Plugin
 
         Craft::info(
             Craft::t(
-                'sync',
+                'weareferal-sync',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
