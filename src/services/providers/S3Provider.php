@@ -65,7 +65,7 @@ class S3Service extends SyncService implements Syncable {
      */
     public function pushVolumes(): bool {
         try {
-            return $this->push("sql");
+            return $this->push("zip");
         } catch (AwsException $e) {
             Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
