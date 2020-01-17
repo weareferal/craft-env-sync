@@ -99,7 +99,7 @@ class SyncService extends Component
     {
         $path = Craft::$app->getPath()->getDbBackupPath();
         $filenames = preg_grep('~\.sql$~', scandir($path));
-        return $this->_encodeSelectOptions($filenames);
+        return $this->encodeSelectOptions($filenames);
     }
 
     /**
@@ -111,7 +111,7 @@ class SyncService extends Component
     {
         $path = Craft::$app->getPath()->getDbBackupPath();
         $filenames = preg_grep('~\.zip$~', scandir($path));
-        return $this->_encodeSelectOptions($filenames);
+        return $this->encodeSelectOptions($filenames);
     }
 
     /**
@@ -144,51 +144,9 @@ class SyncService extends Component
     }
 
     /**
-     * Convert string command to ShellCommand
-     * 
-     * Base on https://github.com/craftcms/cms/tree/master/src/db/Connection.php#L534
-     * 
-     * @param string $command string The command to convert
-     * @return ShellCommand
-     */
-    protected function _createShellCommand(string $command): ShellCommand
-    {
-        $shellCommand = new ShellCommand();
-        $shellCommand->setCommand($command);
-        if (!function_exists('proc_open') && function_exists('exec')) {
-            $shellCommand->useExec = true;
-        }
-        return $shellCommand;
-    }
-
-    /**
-     * Return a list of absolute paths to all volumes
-     * 
-     * @return string[]
-     */
-    protected function _getVolumePaths(): array {
-        $volumes = Craft::$app->getVolumes()->getAllVolumes();
-        $volumePaths = [];
-        foreach ($volumes as $volume) {
-            $volumePaths[] = $volume->rootPath;
-        }
-        return $volumePaths;
-    }
-
-    /**
-     * Performs string interpolation on a command string
-     * 
-     * @param $command string the string command
-     * @return $token string[] 
-     */
-    protected function _replaceCommandTokens($command, $tokens): string {
-        return str_replace(array_keys($tokens), $tokens, $command);
-    }
-
-    /**
      * Encode options from filenames
      */
-    private function _encodeSelectOptions($filenames): array {
+    private function encodeSelectOptions($filenames): array {
         $options = [];
         foreach ($filenames as $i=>$filename) {
             preg_match('/(\d{6}\_\d{6})/', $filename, $matches);

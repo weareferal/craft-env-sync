@@ -23,7 +23,7 @@ class S3Service extends SyncService implements Syncable {
      */
     public function pullDatabase(): bool {
         try {
-            return $this->_pull("sql");
+            return $this->pull("sql");
         } catch (AwsException $e) {
             Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
@@ -51,7 +51,7 @@ class S3Service extends SyncService implements Syncable {
      */
     public function pullVolumes(): bool {
         try {
-            return $this->_pull("zip");
+            return $this->pull("zip");
         } catch (AwsException $e) {
             Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
@@ -65,7 +65,7 @@ class S3Service extends SyncService implements Syncable {
      */
     public function pushVolumes(): bool {
         try {
-            return $this->_push("sql");
+            return $this->push("sql");
         } catch (AwsException $e) {
             Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
@@ -78,12 +78,12 @@ class S3Service extends SyncService implements Syncable {
      * @param $extension string The extension to pull from aws
      * @return bool If process was successful
      */
-    private function _pull($extension): bool {
+    private function pull($extension): bool {
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
         $s3BucketPrefix = Craft::parseEnv($settings->s3BucketPrefix);
 
-        $client = $this->_getS3Client();
+        $client = $this->getS3Client();
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
 
         $results = $client->getPaginator('ListObjectsV2', [
@@ -118,14 +118,14 @@ class S3Service extends SyncService implements Syncable {
         return true;
     }
 
-    private function _push($extension): bool {
+    private function push($extension): bool {
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
 
-        $client = $this->_getS3Client();
+        $client = $this->getS3Client();
         foreach (glob($backupPath . DIRECTORY_SEPARATOR . '*.' . $extension) as $path) {
-            $key = $this->_getAWSKey($path);
+            $key = $this->getAWSKey($path);
             $exists = $client->doesObjectExist($s3BucketName, $key);
             if (! $exists) {
                 $client->putObject([
@@ -140,25 +140,11 @@ class S3Service extends SyncService implements Syncable {
 
         return true;
     }
-
-    /**
-     * Return the full AWS path for backups
-     * 
-     * @return string The path
-     */
-    private function _getAWSBucketPath(): string {
-        $settings = Sync::getInstance()->settings;
-        $path = " s3://{s3BucketName}";
-        if (strlen($settings->s3BucketPrefix) > 0) {
-            $path  = $path . DIRECTORY_SEPARATOR . '{s3BucketPrefix}';
-        }
-        return $path;
-    }
     
     /**
      * 
      */
-    private function _getAWSKey($path): string {
+    private function getAWSKey($path): string {
         $settings = Sync::getInstance()->settings;
         $s3BucketPrefix = Craft::parseEnv($settings->s3BucketPrefix);
 
@@ -172,7 +158,7 @@ class S3Service extends SyncService implements Syncable {
     /**
      * 
      */
-    private function _getS3Client() {
+    private function getS3Client() {
         $settings = Sync::getInstance()->settings;
         $s3AccessKey = Craft::parseEnv($settings->s3AccessKey);
         $s3SecretKey = Craft::parseEnv($settings->s3SecretKey);
