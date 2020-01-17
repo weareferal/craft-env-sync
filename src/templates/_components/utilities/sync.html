@@ -1,62 +1,62 @@
 {% import "_includes/forms" as forms %}
 
 {% if not settingConfigured %}
-    <p>{{ 'Sync\'s plugin settings have not been configured yet'|t('sync') }}</p>
+    <p>{{ 'Sync\'s plugin settings have not been configured yet'|t('env-sync') }}</p>
 {% else %}
     {% set volumeCount = volumes|length %}
     {% set dbBackupsCount = dbBackupOptions|length %}
     {% set volumeBackupCount = volumeBackupOptions|length %}
 
     <section class='sync-utility-section'>
-        <h1>{{ "Database Sync"|t('sync') }}</h1>
+        <h1>{{ "Database Sync"|t('env-sync') }}</h1>
         <hr>
         <div>
-            <h2 data-icon="database">{{ "Create Database Backup"|t('sync') }}</h2>
-            <p class="light">{{ "This will create a new .sql database backup in your local backup folder"|t('sync') }}</p>
+            <h2 data-icon="database">{{ "Create Database Backup"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will create a new .sql database backup in your local backup folder"|t('env-sync') }}</p>
             <form id="create-database-backup" class="sync-utility-form" method="post">    
                 {{ actionInput('utilities/db-backup-perform-action') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit" type="submit" value="{{ 'Create Database Backup'|t('sync') }}">
+                    <input class="btn submit" type="submit" value="{{ 'Create Database Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="upload" class="icon">{{ "Push Database Backups"|t('sync') }}</h2>
-            <p class="light">{{ "This will send all local database backups to your cloud provider"|t('sync') }}</p>
+            <h2 data-icon="upload" class="icon">{{ "Push Database Backups"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will send all local database backups to your cloud provider"|t('env-sync') }}</p>
             <form id="push-database" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/push-database') }}
+                {{ actionInput('env-sync/sync/push-database') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Push Database Backups'|t('sync') }}">
+                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Push Database Backups'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="download" class="icon">{{ "Pull Database Backups"|t('sync') }}</h2>
-            <p class="light">{{ "This will download all database backups from your cloud provider to the local backup folder"|t('sync') }}</p>
+            <h2 data-icon="download" class="icon">{{ "Pull Database Backups"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will download all database backups from your cloud provider to the local backup folder"|t('env-sync') }}</p>
             <form id="pull-database" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/pull-database') }}
+                {{ actionInput('env-sync/sync/pull-database') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit" type="submit" value="{{ 'Pull Database Backups'|t('sync') }}">
+                    <input class="btn submit" type="submit" value="{{ 'Pull Database Backups'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="refresh" class="icon">{{ "Restore Database Backup"|t('sync') }}</h2>
+            <h2 data-icon="refresh" class="icon">{{ "Restore Database Backup"|t('env-sync') }}</h2>
             <p>
-                <i data-icon="alert" class="warning"></i> <strong class="warning">{{ "This is destructive!"|t('sync') }}</strong>
-                <span class="light">{{ "This will replace all local assets with the choosen backup (from your local backup folder)"|t('sync') }}</span>
+                <i data-icon="alert" class="warning"></i> <strong class="warning">{{ "This is destructive!"|t('env-sync') }}</strong>
+                <span class="light">{{ "This will replace all local assets with the choosen backup (from your local backup folder)"|t('env-sync') }}</span>
             </p>
             <form id="restore-database-backup" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/restore-database') }}
+                {{ actionInput('env-sync/sync/restore-database') }}
                 {{ csrfInput() }}
                 {{ forms.selectField({
                     id: 'database-name',
@@ -65,7 +65,7 @@
                     options: dbBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('sync') }}">
+                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
@@ -74,56 +74,56 @@
     </section>
 
     <section class='sync-utility-section'>
-        <h1>{{ "Assets Sync"|t('sync') }}</h1>
+        <h1>{{ "Assets Sync"|t('env-sync') }}</h1>
         <hr>
         <div>
-            <h2 data-icon="asset">{{ "Create Assets Backup"|t('sync') }}</h2>
-            <p class="light">{{ "This will create a new zipped archive of all assets in your local backup folder"|t('sync') }}</p>
+            <h2 data-icon="asset">{{ "Create Assets Backup"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will create a new zipped archive of all assets in your local backup folder"|t('env-sync') }}</p>
             <form id="create-volumes-backup" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/create-volumes-backup') }}
+                {{ actionInput('env-sync/sync/create-volumes-backup') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ volumeCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Create Assets Backup'|t('sync') }}">
+                    <input class="btn submit {{ volumeCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Create Assets Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
-                {% if not volumeCount %}<p class="light">{{ 'No volumes created yet'|t('sync') }}</p>{% endif %}
+                {% if not volumeCount %}<p class="light">{{ 'No volumes created yet'|t('env-sync') }}</p>{% endif %}
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="upload" class="icon">{{ "Push Assets Backups"|t('sync') }}</h2>
-            <p class="light">{{ "This will send all local zipped asset backups to your cloud provider"|t('sync') }}</p>
+            <h2 data-icon="upload" class="icon">{{ "Push Assets Backups"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will send all local zipped asset backups to your cloud provider"|t('env-sync') }}</p>
             <form id="push-volumes" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/push-volumes') }}
+                {{ actionInput('env-sync/sync/push-volumes') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Push Assets Backups'|t('sync') }}">
+                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Push Assets Backups'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="download" class="icon">{{ "Pull Assets Backups"|t('sync') }}</h2>
-            <p class="light">{{ "This will download all zipped asset backups from your cloud provider to the local backup folder"|t('sync') }}</p>
+            <h2 data-icon="download" class="icon">{{ "Pull Assets Backups"|t('env-sync') }}</h2>
+            <p class="light">{{ "This will download all zipped asset backups from your cloud provider to the local backup folder"|t('env-sync') }}</p>
             <form id="pull-volumes" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/pull-volumes') }}
+                {{ actionInput('env-sync/sync/pull-volumes') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit" type="submit" value="{{ 'Pull Assets Backups'|t('sync') }}">
+                    <input class="btn submit" type="submit" value="{{ 'Pull Assets Backups'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
             <hr>
         </div>
         <div>
-            <h2 data-icon="refresh" class="icon">{{ "Restore Asset Backup"|t('sync') }}</h2>
+            <h2 data-icon="refresh" class="icon">{{ "Restore Asset Backup"|t('env-sync') }}</h2>
             <p>
-                <i data-icon="alert" class="warning"></i> <strong class="warning">{{ "This is destructive!"|t('sync') }}</strong>
-                <span class="light">{{ "This will replace all local assets with the choosen backup (from your local backup folder)"|t('sync') }}</span>
+                <i data-icon="alert" class="warning"></i> <strong class="warning">{{ "This is destructive!"|t('env-sync') }}</strong>
+                <span class="light">{{ "This will replace all local assets with the choosen backup (from your local backup folder)"|t('env-sync') }}</span>
             </p>
             <form id="restore-volumes-backup" class="sync-utility-form" method="post">    
-                {{ actionInput('sync/sync/restore-volumes') }}
+                {{ actionInput('env-sync/sync/restore-volumes') }}
                 {{ csrfInput() }}
                 {{ forms.selectField({
                     id: 'volume-name',
@@ -132,7 +132,7 @@
                     options: volumeBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('sync') }}">
+                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>            
             </form>

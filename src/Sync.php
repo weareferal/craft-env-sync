@@ -47,6 +47,7 @@ class Sync extends Plugin
             'sync' => SyncService::create($this->getSettings()->cloudProvider)
         ]);
 
+        // Register console commands
         if (Craft::$app instanceof ConsoleApplication) {
             $this->controllerNamespace = 'weareferal\sync\console\controllers';
         }
@@ -57,7 +58,7 @@ class Sync extends Plugin
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
             function(RegisterUserPermissionsEvent $event) {
                 $event->permissions['Sync'] = [
-                    'sync' => [
+                    'env-sync' => [
                         'label' => 'Sync database and assets',
                     ],
                 ];

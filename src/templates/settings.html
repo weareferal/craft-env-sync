@@ -2,7 +2,7 @@
 
 {% macro configWarning(setting) -%}
     {% set setting = '<code>'~setting~'</code>' %}
-    {{ "This is being overridden by the {setting} config setting in your {file} config file."|t('sync', {
+    {{ "This is being overridden by the {setting} config setting in your {file} config file."|t('env-sync', {
         setting: setting,
         file: 'sync.php'
     })|raw }}
@@ -12,7 +12,7 @@
 
 {{ forms.selectField({
     first: true,
-    label: "Cloud Provider"|t('sync'),
+    label: "Cloud Provider"|t('env-sync'),
     id: 'cloudProvider',
     name: 'cloudProvider',
     options: [
@@ -24,8 +24,8 @@
 }) }}
 
 {{ forms.autosuggestField({
-    label: "S3 Access Key"|t('sync'),
-    instructions: "The access key associated with your IAM user"|t('sync'),
+    label: "S3 Access Key"|t('env-sync'),
+    instructions: "The access key associated with your IAM user"|t('env-sync'),
     name: 's3AccessKey',
     id: 's3AccessKey',
     suggestEnvVars: true,
@@ -38,7 +38,7 @@
 
 {{ forms.autosuggestField({
     label: "S3 Secret Key",
-    instructions: "The secret key associated with your IAM user"|t('sync'),
+    instructions: "The secret key associated with your IAM user"|t('env-sync'),
     name: 's3SecretKey',
     id: 's3SecretKey',
     suggestEnvVars: true,
@@ -50,8 +50,8 @@
 }) }}
 
 {{ forms.autosuggestField({
-    label: "S3 Bucket Name"|t('sync'),
-    instructions: "The name of the S3 bucket you want to sync backups to"|t('sync'),
+    label: "S3 Bucket Name"|t('env-sync'),
+    instructions: "The name of the S3 bucket you want to sync backups to"|t('env-sync'),
     name: 's3BucketName',
     id: 's3BucketName',
     suggestEnvVars: true,
@@ -63,8 +63,8 @@
 }) }}
 
 {{ forms.autosuggestField({
-    label: "S3 Region Name"|t('sync'),
-    instructions: "The AWS region your S3 bucket is in"|t('sync'),
+    label: "S3 Region Name"|t('env-sync'),
+    instructions: "The AWS region your S3 bucket is in"|t('env-sync'),
     name: 's3RegionName',
     id: 's3RegionName',
     suggestEnvVars: true,
@@ -76,8 +76,8 @@
 }) }}
 
 {{ forms.autosuggestField({
-    label: "S3 Bucket Prefix"|t('sync'),
-    instructions: "A path within your S3 bucket to prefix your backups with. Do not include a leading or trailing slash"|t('sync'),
+    label: "S3 Bucket Prefix"|t('env-sync'),
+    instructions: "A path within your S3 bucket to prefix your backups with. Do not include a leading or trailing slash"|t('env-sync'),
     name: 's3BucketPrefix',
     id: 's3BucketPrefix',
     suggestEnvVars: true,
@@ -90,8 +90,8 @@
 <hr>
 
 {{ forms.lightswitchField({
-    label: "Use Queue"|t('sync'),
-    instructions: "Whether or not to use the Craft 3 queue"|t('sync'),
+    label: "Use Queue"|t('env-sync'),
+    instructions: "Whether or not to use the Craft 3 queue"|t('env-sync'),
     name: 'useQueue',
     id: 'useQueue',
     on: settings.useQueue,

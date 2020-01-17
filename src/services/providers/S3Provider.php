@@ -60,42 +60,38 @@ class S3Service extends SyncService implements Syncable {
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
         $s3BucketPrefix = Craft::parseEnv($settings->s3BucketPrefix);
-    
+
         $client = $this->_getS3Client();
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
-        try {
-            $results = $client->getPaginator('ListObjectsV2', [
-                'Bucket' => $s3BucketName,
-                'Prefix' => $s3BucketPrefix,
-                'MaxKeys' => 1000
-            ]);
 
-            foreach ($results as $result) {
-                if ($result['KeyCount'] > 0)  {
-                    foreach ($result['Contents'] as $object) {
-                        $key = $object['Key'];
-                        $file_info = pathinfo($key);
-                        if ($file_info['extension'] == $extension) {
-                            $path = $backupPath . DIRECTORY_SEPARATOR . $file_info['basename'];
-                            if (! file_exists($path)) {
-                                $client->getObject([
-                                    'Bucket' => $s3BucketName,
-                                    'Key' => $key,
-                                    'SaveAs' => $path
-                                ]);
-                            } else {
-                                Craft::info("Skipping '" . $key . "' as file already exists locally", "env-sync");
-                            }
+        $results = $client->getPaginator('ListObjectsV2', [
+            'Bucket' => $s3BucketName,
+            'Prefix' => $s3BucketPrefix,
+            'MaxKeys' => 1000
+        ]);
+
+        foreach ($results as $result) {
+            if ($result['KeyCount'] > 0)  {
+                foreach ($result['Contents'] as $object) {
+                    $key = $object['Key'];
+                    $file_info = pathinfo($key);
+                    if ($file_info['extension'] == $extension) {
+                        $path = $backupPath . DIRECTORY_SEPARATOR . $file_info['basename'];
+                        if (! file_exists($path)) {
+                            $client->getObject([
+                                'Bucket' => $s3BucketName,
+                                'Key' => $key,
+                                'SaveAs' => $path
+                            ]);
                         } else {
-                            Craft::info("Skipping '" . $key . "' as extension doesn't match", "env-sync");
+                            Craft::info("Skipping '" . $key . "' as file already exists locally", "env-sync");
                         }
-                        
+                    } else {
+                        Craft::info("Skipping '" . $key . "' as extension doesn't match", "env-sync");
                     }
+                    
                 }
             }
-        } catch (Exception $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            return false;
         }
 
         return true;
@@ -105,25 +101,20 @@ class S3Service extends SyncService implements Syncable {
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
-        $s3 = $this->_getS3Client();
 
-        try {
-            foreach (glob($backupPath . DIRECTORY_SEPARATOR . '*.' . $extension) as $path) {
-                $key = $this->_getAWSKey($path);
-                $exists = $s3->doesObjectExist($s3BucketName, $key);
-                if (! $exists) {
-                    $s3->putObject([
-                        'Bucket' => $s3BucketName,
-                        'Key' => $key,
-                        'SourceFile' => $path
-                    ]);
-                } else {
-                    Craft::warning("File '" . $key . "' already exists on S3", "craft-sync");
-                }
+        $client = $this->_getS3Client();
+        foreach (glob($backupPath . DIRECTORY_SEPARATOR . '*.' . $extension) as $path) {
+            $key = $this->_getAWSKey($path);
+            $exists = $client->doesObjectExist($s3BucketName, $key);
+            if (! $exists) {
+                $client->putObject([
+                    'Bucket' => $s3BucketName,
+                    'Key' => $key,
+                    'SourceFile' => $path
+                ]);
+            } else {
+                Craft::warning("File '" . $key . "' already exists on S3", "craft-sync");
             }
-        } catch (Exception $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            return false;
         }
 
         return true;

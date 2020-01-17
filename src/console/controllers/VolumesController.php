@@ -35,7 +35,7 @@ class VolumesController extends Controller
     {
         try {
             Sync::getInstance()->sync->createVolumesBackup();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
@@ -51,7 +51,7 @@ class VolumesController extends Controller
     {
         try {
             Sync::getInstance()->sync->pushVolumes();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
@@ -67,7 +67,7 @@ class VolumesController extends Controller
     {
         try {
             Sync::getInstance()->sync->pushVolumes();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;

@@ -17,7 +17,7 @@
 
         public static function id(): string
         {
-            return 'sync';
+            return 'env-sync';
         }
 
         public static function iconPath()

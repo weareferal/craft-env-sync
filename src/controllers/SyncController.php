@@ -22,7 +22,7 @@ class SyncController extends Controller
 
         try {
             Sync::getInstance()->sync->createVolumesBackup();
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error creating volume backup'));
         }
@@ -45,7 +45,7 @@ class SyncController extends Controller
                 Sync::getInstance()->sync->pushDatabase();
             }
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pushing database'));
         }
@@ -67,7 +67,7 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pullDatabase();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pulling database'));
         }
@@ -89,7 +89,7 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pushVolumes();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pushing volume'));
         }
@@ -111,7 +111,7 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pullVolumes();
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pulling volume'));
         }
@@ -126,7 +126,7 @@ class SyncController extends Controller
         try {
             $databaseName = Craft::$app->getRequest()->getRequiredBodyParam('database-name');
             Sync::getInstance()->sync->restoreDatabaseBackup($databaseName);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error restoring database'));
         }
@@ -145,7 +145,7 @@ class SyncController extends Controller
         try {
             $volumeName = Craft::$app->getRequest()->getRequiredBodyParam('volume-name');
             Sync::getInstance()->sync->restoreVolumesBackup($volumeName);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error restoring assets'));
         }
