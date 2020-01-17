@@ -80,6 +80,10 @@ For database backups and restorations we use the existing Craft scripts - they a
 
 For volume assets backups, we simply create a versioned zip file containing the handles of all volume assets currently saved in the system. Bear in mind if you have a large number of assets this process may take some time and take up a significant amount of storage.
 
+## Troubleshooting
+
+If you are getting errors when you try to pull/push databases or assets, the first thing to check is the Craft logs at `storage/logs/web.log`. All errors should be logged here. The most likely issue is with your credentials, so double check that those are OK.
+
 ## Roadmap
 
 Some things to do, and ideas for potential features:
