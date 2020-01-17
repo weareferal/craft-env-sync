@@ -10,6 +10,7 @@ use weareferal\sync\queue\PullDatabaseJob;
 use weareferal\sync\queue\PullVolumesJob;
 use weareferal\sync\queue\PushDatabaseJob;
 use weareferal\sync\queue\PushVolumesJob;
+use weareferal\sync\exceptions\ProviderException;
 
 
 class SyncController extends Controller
@@ -44,7 +45,8 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pushDatabase();
             }
-            
+        } catch (ProviderException $e) {
+            return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pushing database'));
@@ -67,11 +69,13 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pullDatabase();
             }
+        } catch (ProviderException $e) {
+            return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pulling database'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
@@ -89,6 +93,8 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pushVolumes();
             }
+        } catch (ProviderException $e) {
+            return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pushing volume'));
@@ -111,6 +117,8 @@ class SyncController extends Controller
             } else {
                 Sync::getInstance()->sync->pullVolumes();
             }
+        } catch (ProviderException $e) {
+            return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pulling volume'));

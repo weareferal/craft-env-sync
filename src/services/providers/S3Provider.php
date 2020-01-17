@@ -5,10 +5,12 @@ use Composer\Util\Platform;
 use Craft;
 use craft\errors\ShellCommandException;
 use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
 use weareferal\sync\Sync;
 use weareferal\sync\services\Syncable;
 use weareferal\sync\services\SyncService;
+use weareferal\sync\exceptions\ProviderException;
 
 
 
@@ -20,7 +22,11 @@ class S3Service extends SyncService implements Syncable {
      * @return bool If process was successful
      */
     public function pullDatabase(): bool {
-        return $this->_pull("sql");
+        try {
+            return $this->_pull("sql");
+        } catch (AwsException $e) {
+            throw new ProviderException("AWS Error (" . $e->getAWSErrorCode() . ")");
+        }
     }
 
     /**
@@ -29,7 +35,11 @@ class S3Service extends SyncService implements Syncable {
      * @return bool If process was successful
      */
     public function pushDatabase(): bool {
-        return $this->_push("sql");
+        try {
+            return $this->push("sql");
+        } catch (AwsException $e) {
+            throw new ProviderException("AWS Error (" . $e->getAWSErrorCode() . ")");
+        }
     }
 
     /**
@@ -38,7 +48,11 @@ class S3Service extends SyncService implements Syncable {
      * @return bool If process was successful
      */
     public function pullVolumes(): bool {
-        return $this->_pull("zip");
+        try {
+            return $this->_pull("zip");
+        } catch (AwsException $e) {
+            throw new ProviderException("AWS Error (" . $e->getAWSErrorCode() . ")");
+        }
     }
 
     /**
@@ -47,7 +61,11 @@ class S3Service extends SyncService implements Syncable {
      * @return bool If process was successful
      */
     public function pushVolumes(): bool {
-        return $this->_push("zip");
+        try {
+            return $this->_push("sql");
+        } catch (AwsException $e) {
+            throw new ProviderException("AWS Error (" . $e->getAWSErrorCode() . ")");
+        }
     }
 
     /**
@@ -89,7 +107,6 @@ class S3Service extends SyncService implements Syncable {
                     } else {
                         Craft::info("Skipping '" . $key . "' as extension doesn't match", "env-sync");
                     }
-                    
                 }
             }
         }
