@@ -25,6 +25,7 @@ class S3Service extends SyncService implements Syncable {
         try {
             return $this->_pull("sql");
         } catch (AwsException $e) {
+            Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
         }
     }
@@ -38,6 +39,7 @@ class S3Service extends SyncService implements Syncable {
         try {
             return $this->push("sql");
         } catch (AwsException $e) {
+            Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
         }
     }
@@ -51,6 +53,7 @@ class S3Service extends SyncService implements Syncable {
         try {
             return $this->_pull("zip");
         } catch (AwsException $e) {
+            Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
         }
     }
@@ -64,6 +67,7 @@ class S3Service extends SyncService implements Syncable {
         try {
             return $this->_push("sql");
         } catch (AwsException $e) {
+            Craft::$app->getErrorHandler()->logException($e);
             throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
         }
     }
