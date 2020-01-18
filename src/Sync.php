@@ -73,16 +73,6 @@ class Sync extends Plugin
                 $event->types[] = SyncUtility::class;
             }
         );
-        
-
-        Craft::info(
-            Craft::t(
-                'env-sync',
-                '{name} plugin loaded',
-                ['name' => $this->name]
-            ),
-            __METHOD__
-        );
     }
 
     protected function createSettingsModel(): Settings
