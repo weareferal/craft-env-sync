@@ -1,5 +1,5 @@
 {
-    "name": "weareferal/sync",
+    "name": "weareferal/env-sync",
     "description": "Sync and backup your database and assets across Craft environments",
     "type": "craft-plugin",
     "keywords": [
@@ -13,8 +13,8 @@
         "env"
     ],
     "support": {
-        "docs": "https://github.com/weareferal/craft-sync/blob/master/README.md",
-        "issues": "https://github.com/weareferal/craft-sync/issues"
+        "docs": "https://github.com/weareferal/craft-env-sync/blob/master/README.md",
+        "issues": "https://github.com/weareferal/craft-env-sync/issues"
     },
     "license": "proprietry",
     "authors": [
@@ -37,7 +37,7 @@
         "handle": "env-sync",
         "hasCpSettings": true,
         "hasCpSection": false,
-        "changelogUrl": "https://raw.githubusercontent.com/weareferal/craft-sync/master/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/weareferal/craft-env-sync/master/CHANGELOG.md",
         "class": "weareferal\\sync\\Sync"
     }
 }

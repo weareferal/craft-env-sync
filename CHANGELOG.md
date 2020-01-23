@@ -39,3 +39,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Changed license
+
+## 1.0.6 - 2020-01-23
+
+### Changed
+
+- Change name to env-sync to avoid name collision with the plugin store
