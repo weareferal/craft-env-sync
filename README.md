@@ -1,4 +1,4 @@
-# Sync plugin for Craft CMS 3.x
+# Craft Env Sync plugin for Craft CMS 3.x
 
 Backup and restore your database and volume assets across environments from the comfort of the Craft Control Panel.
 
@@ -25,13 +25,13 @@ To install the plugin, follow these instructions.
    $ composer require weareferal/sync
    ```
 
-3. In the Control Panel, go to Settings → Plugins and click the *Install* button for Craft Sync.
+3. In the Control Panel, go to Settings → Plugins and click the *Install* button for Craft Env Sync.
 
 ## Overview
 
-Craft Sync is a plugin that makes it possible to sync your database and volume assets across numerous environments from the comfort of the Craft Control Panel. This makes it much easier to move your site from local development to staging and onto production.
+Craft Env Sync is a plugin that makes it possible to sync your database and volume assets across numerous environments from the comfort of the Craft Control Panel. This makes it much easier to move your site from local development to staging and onto production.
 
-![Craft Sync Overview](resources/img/overview.png)
+![Craft Env Sync Overview](resources/img/overview.png)
 
 This plugin uses AWS S3 (more providers to come soon) as the "single source of truth" for all site DB/volume asset backups. It provides an easy-to-configure settings page as well as an interface in Craft's "utilties" section to:
 
@@ -44,9 +44,9 @@ For more information read our blog post on ["Syncing your DB and assets across e
 
 This plugin is inspired by ![Andrew Welsch's `craft-scripts` library](https://github.com/nystudio107/craft-scripts) who also [has a great blog post on syncing you DB and assets in Craft](https://nystudio107.com/blog/database-asset-syncing-between-environments-in-craft-cms).
 
-## Configuring Craft Sync
+## Configuration
 
-![Craft Sync Setting Screenshot](resources/img/settings-screenshot.png)
+![Craft Env Sync Setting Screenshot](resources/img/settings-screenshot.png)
 
 Configuration is done through the dedicated "Sync" settings panel. The details entered here correspond to your AWS S3 account and bucket that you want to use for backups. It's recommended to set up a new IAM user that has programmatic access (meaning via a acces/secret key) to a private S3 bucket.
 
@@ -66,7 +66,7 @@ AWS_BUCKET_PREFIX = "craft-backups/my-site"
 
 ## Usage
 
-![Craft Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
+![Craft Env Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
 
 Once you have entered your settings variables you should be able to use the "sync" tab on the "utilities" section of the control panel.
 
@@ -88,7 +88,7 @@ If you are getting errors when you try to pull/push databases or assets, the fir
 
 Some things to do, and ideas for potential features:
 
-* Add a "test details" button in the settings page to immediately test S3 connection
-* Add more providers
+- Add a "test details" button in the settings page to immediately test S3 connection
+- Add more providers
 
 Brought to you by [Feral](https://weareferal.com)
