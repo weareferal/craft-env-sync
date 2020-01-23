@@ -65,7 +65,7 @@
                     options: dbBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('env-sync') }}">
+                    <input class="btn submit confirm {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
@@ -132,7 +132,7 @@
                     options: volumeBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('env-sync') }}">
+                    <input class="btn submit confirm {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>            
             </form>

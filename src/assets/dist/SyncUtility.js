@@ -18,6 +18,13 @@
                 ev.preventDefault();
 
                 if (!this.$trigger.hasClass('disabled')) {
+                    if (this.$trigger.hasClass('confirm')) {
+                        var confirmed = confirm("Are you sure you want to restore?");
+                        if (! confirmed) {
+                            return;
+                        }
+                    }
+
                     if (!this.progressBar) {
                         this.progressBar = new Craft.ProgressBar(this.$status);
                     }
@@ -76,7 +83,6 @@
             },
 
             onComplete: function(response) {
-                console.log(response)
                 if (! this.$allDone) {
                     this.$allDone = $('<div class="alldone" data-icon="done" />').appendTo(this.$status);
                     this.$allDone.css('opacity', 0);
