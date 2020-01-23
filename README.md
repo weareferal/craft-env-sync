@@ -22,7 +22,7 @@ To install the plugin, follow these instructions.
 2. Then tell Composer to load the plugin:
 
    ```sh
-   $ composer require weareferal/sync
+   $ composer require weareferal/env-sync
    ```
 
 3. In the Control Panel, go to Settings → Plugins and click the *Install* button for Craft Env Sync.
