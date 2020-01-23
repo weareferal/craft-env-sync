@@ -147,13 +147,24 @@ class SyncService extends Component
      * Encode options from filenames
      */
     private function encodeSelectOptions($filenames): array {
+        $tmp = [];
         $options = [];
+
         foreach ($filenames as $i=>$filename) {
             preg_match('/(\d{6}\_\d{6})/', $filename, $matches);
             $datetime = date_create_from_format('ymd_Gis', $matches[0]);
             $datetime_str = $datetime->format('Y-m-d H:i:s');
-            $options[$i] = ["label"=>$datetime_str, "value"=>$filename];
+            array_push($tmp, [$i, $filename, $datetime, $datetime_str]);
         }
+
+        uasort($tmp, function($a, $b) {
+            return $a[2] <=> $b[2];
+        });
+
+        foreach ($tmp as $t) {
+            $options[$t[0]] = ["label"=>$t[3], "value"=>$t[1]];
+        }
+
         return array_reverse($options);
     }
 
