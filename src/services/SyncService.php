@@ -21,25 +21,37 @@ interface Syncable
 class SyncService extends Component
 {
     /**
-     * Create a new zipped archive of all volumes in the `storage/backup`
-     * folder
+     * Create a SQL database dump to our backup folder
      * 
-     * @return bool If the backup was successful
+     * NOTE: Craft already has a native function for this operation, but 
+     * we want to provide a little bit more control over the filename so we
+     * piggy-back on the existing backup methods from 
+     * 
+     * https://github.com/craftcms/cms/blob/master/src/db/Connection.php
      */
-    public function createVolumesBackup(): bool 
+    public function createDatabaseBackup() {
+        $backupPath = $this->getBackupPath('sql');
+        Craft::$app->getDb()->backupTo($backupPath);
+    }
+
+    /**
+     * Create a zipped archive of all volumes to our backup folder
+     * 
+     */
+    public function createVolumesBackup() 
     {
+        $backupPath = $this->getBackupPath('zip');
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
-        $source = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . strtolower(StringHelper::randomString(10));
+        $tmpDirName = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . strtolower(StringHelper::randomString(10));
+
         foreach ($volumes as $i=>$volume) {
-            $tmp = $source . DIRECTORY_SEPARATOR . $volume->handle;
-            FileHelper::copyDirectory($volume->rootPath, $tmp);
+            $tmpPath = $tmpDirName . DIRECTORY_SEPARATOR . $volume->handle;
+            FileHelper::copyDirectory($volume->rootPath, $tmpPath);
         }
 
-        $dest = $this->getVolumeBackupPath();
-        $zip = ZipHelper::recursiveZip($source, $dest);
-        FileHelper::clearDirectory(Craft::$app->getPath()->getTempPath());
+        $zip = ZipHelper::recursiveZip($tmpDirName, $backupPath);
 
-        return true;
+        FileHelper::clearDirectory(Craft::$app->getPath()->getTempPath());
     }
 
     /**
@@ -47,20 +59,20 @@ class SyncService extends Component
      * 
      * @param string $filename The filename (not absolute path) of the 
      * zipped volumes archive to restore
-     * @return bool If the restore was successful
      */
-    public function restoreVolumesBackup($filename): bool
+    public function restoreVolumesBackup($filename)
     {
         $volumes = Craft::$app->getVolumes()->getAllVolumes();
-        $source = Craft::$app->getPath()->getDbBackupPath() . DIRECTORY_SEPARATOR . pathinfo($filename, PATHINFO_FILENAME) . '.zip';
-        $tmp = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . strtolower(StringHelper::randomString(10));
-        ZipHelper::unzip($source, $tmp);
+        $backupPath = Craft::$app->getPath()->getDbBackupPath() . DIRECTORY_SEPARATOR . pathinfo($filename, PATHINFO_FILENAME) . '.zip';
+        $tmpDir = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . strtolower(StringHelper::randomString(10));
 
-        $folders = array_diff(scandir($tmp), array('.', '..'));
+        ZipHelper::unzip($path, $tmpDir);
+
+        $folders = array_diff(scandir($tmpDir), array('.', '..'));
         foreach ($folders as $folder) {
             foreach ($volumes as $volume) {
                 if ($folder == $volume->handle) {
-                    $dest = $tmp . DIRECTORY_SEPARATOR . $folder;
+                    $dest = $tmpDir . DIRECTORY_SEPARATOR . $folder;
                     if (! file_exists($volume->rootPath)) {
                         FileHelper::createDirectory($volume->rootPath);
                     } else {
@@ -72,8 +84,6 @@ class SyncService extends Component
         }
 
         FileHelper::clearDirectory(Craft::$app->getPath()->getTempPath());
-
-        return true;
     }
 
     /**
@@ -81,13 +91,11 @@ class SyncService extends Component
      * 
      * @param string $filename The filename (not absolute path) of the 
      * zipped volumes archive to restore
-     * @return bool If the restore was successful
      */
-    public function restoreDatabaseBackup($filename): bool
+    public function restoreDatabaseBackup($filename)
     {
         $path = Craft::$app->getPath()->getDbBackupPath() . DIRECTORY_SEPARATOR . pathinfo($filename, PATHINFO_FILENAME) . '.sql';
         Craft::$app->getDb()->restore($path);
-        return true;
     }
 
     /**
@@ -103,6 +111,35 @@ class SyncService extends Component
     }
 
     /**
+     * Return the absolute path to a new backup file
+     * 
+     * @return string The absolute path to a new backup
+     */
+    private function getBackupPath($extension): string
+    {
+        $dir = Craft::$app->getPath()->getDbBackupPath();
+        $filename = $this->getBackupFilename();
+        $path = $dir . DIRECTORY_SEPARATOR . $filename . '.' . $extension;
+        return mb_strtolower($path);
+    }
+
+    /**
+     * Return a unique filename for new backup files
+     * 
+     * Based on https://github.com/craftcms/cms/tree/master/src/db/Connection.php#L203
+     * 
+     * @return string
+     */
+    private function getBackupFilename(): string
+    {
+        $currentVersion = 'v' . Craft::$app->getVersion();
+        $systemName = FileHelper::sanitizeFilename(Craft::$app->getInfo()->name, ['asciiOnly' => true]);
+        $systemEnv = Craft::$app->env;
+        $filename = ($systemName ? $systemName . '_' : '') . ($systemEnv ? $systemEnv . '_' : '') . gmdate('ymd_His') . '_' . strtolower(StringHelper::randomString(10)) . '_' . $currentVersion;
+        return mb_strtolower($filename);
+    }
+
+    /**
      * Return available volume backups
      * 
      * @return string[] A list of filename ready for an HTML select
@@ -115,45 +152,41 @@ class SyncService extends Component
     }
 
     /**
-     * Return the full path to a new volume backup
-     * 
-     * @return string The absolute path to a new backup
-     */
-    private function getVolumeBackupPath(): string
-    {
-        $dir = Craft::$app->getPath()->getDbBackupPath();
-        $filename = $this->getVolumeBackupName();
-        $path = $dir . DIRECTORY_SEPARATOR . $filename . '.zip';
-        return mb_strtolower($path);
-    }
-
-    /**
-     * Return a unique filename for volumes zip file
-     * 
-     * Based on https://github.com/craftcms/cms/tree/master/src/db/Connection.php#L203
-     * 
-     * @return string
-     */
-    private function getVolumeBackupName(): string
-    {
-        $currentVersion = 'v' . Craft::$app->getVersion();
-        $systemName = FileHelper::sanitizeFilename(Craft::$app->getInfo()->name, ['asciiOnly' => true]);
-        $systemEnv = Craft::$app->env;
-        $filename = ($systemName ? $systemName . '_' : '') . ($systemEnv ? $systemEnv . '_' : '') . gmdate('ymd_His') . '_' . strtolower(StringHelper::randomString(10)) . '_' . $currentVersion;
-        return mb_strtolower($filename);
-    }
-
-    /**
-     * Encode options from filenames
+     * Create an array of human-readable select options from backup files
      */
     private function encodeSelectOptions($filenames): array {
+        $tmp = [];
         $options = [];
+        // Regex to capture/match:
+        // - Site name
+        // - Environment (optional and captured)
+        // - Date (required and captured)
+        // - Random string
+        // - Version
+        // - Extension
+        $regex = '/^(?:[a-zA-Z0-9]+)\_(?:([a-zA-Z]+)\_)?(\d{6}\_\d{6})\_(?:[a-zA-Z0-9]+)\_(?:[v0-9\.]+)\.(?:\w{2,10})$/';
+
         foreach ($filenames as $i=>$filename) {
-            preg_match('/(\d{6}\_\d{6})/', $filename, $matches);
-            $datetime = date_create_from_format('ymd_Gis', $matches[0]);
-            $datetime_str = $datetime->format('Y-m-d H:i:s');
-            $options[$i] = ["label"=>$datetime_str, "value"=>$filename];
+            preg_match($regex, $filename, $matches);
+            $env = $matches[1];
+            $date = $matches[2];
+
+            $datetime = date_create_from_format('ymd_Gis', $date);
+            $label = $datetime->format('Y-m-d H:i:s');
+            if ($env) {
+                $label = $label  . ' (' . $env . ')';
+            }
+            array_push($tmp, [$i, $filename, $datetime, $label]);
         }
+
+        uasort($tmp, function($a, $b) {
+            return $a[2] <=> $b[2];
+        });
+
+        foreach ($tmp as $t) {
+            $options[$t[0]] = ["label"=>$t[3], "value"=>$t[1]];
+        }
+
         return array_reverse($options);
     }
 

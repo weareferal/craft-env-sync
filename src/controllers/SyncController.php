@@ -15,6 +15,24 @@ use weareferal\sync\exceptions\ProviderException;
 
 class SyncController extends Controller
 {
+    public function actionCreateDatabaseBackup ()
+    {
+        $this->requirePostRequest();
+        $this->requireCpRequest();
+        $this->requirePermission('sync');
+
+        try {
+            Sync::getInstance()->sync->createDatabaseBackup();
+        } catch (\Exception $e) {
+            Craft::$app->getErrorHandler()->logException($e);
+            return $this->asErrorJson(Craft::t('env-sync', 'Error creating database backup'));
+        }
+    
+        return $this->asJson([
+            "success" => true
+        ]);
+    }
+
     public function actionCreateVolumesBackup ()
     {
         $this->requirePostRequest();

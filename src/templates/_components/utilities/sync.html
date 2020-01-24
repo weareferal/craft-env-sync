@@ -1,7 +1,8 @@
 {% import "_includes/forms" as forms %}
-
 {% if not settingConfigured %}
-    <p>{{ 'Sync\'s plugin settings have not been configured yet'|t('env-sync') }}</p>
+    <div class="field">
+        <p class="warning"><strong>{{ 'Plugin settings have not been configured yet'|t('env-sync') }}</strong></p>
+    </div>
 {% else %}
     {% set volumeCount = volumes|length %}
     {% set dbBackupsCount = dbBackupOptions|length %}
@@ -14,7 +15,7 @@
             <h2 data-icon="database">{{ "Create Database Backup"|t('env-sync') }}</h2>
             <p class="light">{{ "This will create a new .sql database backup in your local backup folder"|t('env-sync') }}</p>
             <form id="create-database-backup" class="sync-utility-form" method="post">    
-                {{ actionInput('utilities/db-backup-perform-action') }}
+                {{ actionInput('env-sync/sync/create-database-backup') }}
                 {{ csrfInput() }}
                 <div class='sync-utility-submit'>
                     <input class="btn submit" type="submit" value="{{ 'Create Database Backup'|t('env-sync') }}">
@@ -65,7 +66,7 @@
                     options: dbBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('env-sync') }}">
+                    <input class="btn submit confirm {{ dbBackupsCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Database Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>
             </form>
@@ -132,7 +133,7 @@
                     options: volumeBackupOptions
                 }) }}
                 <div class='sync-utility-submit'>
-                    <input class="btn submit {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('env-sync') }}">
+                    <input class="btn submit confirm {{ volumeBackupCount > 0 ? '' : 'disabled' }}" type="submit" value="{{ 'Restore Asset Backup'|t('env-sync') }}">
                     <div class="utility-status"></div>
                 </div>            
             </form>
