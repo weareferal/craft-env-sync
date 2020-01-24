@@ -28,13 +28,9 @@
         public static function contentHtml(): string
         {
             $view = Craft::$app->getView();
-
-            // Make use of the existing default database backup utility
-            $view->registerAssetBundle(DbBackupAsset::class);
-            $view->registerJs('new Craft.DbBackupUtility(\'create-database-backup\');');
-
             $view->registerAssetBundle(SyncAsset::class);
             $forms = [
+                ['create-database-backup', true],
                 ['create-volumes-backup', true],
                 ['push-database', false],
                 ['push-volumes', false],
