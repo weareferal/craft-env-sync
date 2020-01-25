@@ -15,7 +15,6 @@ use weareferal\sync\exceptions\ProviderException;
 
 
 class S3Service extends SyncService implements Syncable {
-
     /**
      * Pull database backups from cloud to local backup folder
      * 
@@ -24,9 +23,8 @@ class S3Service extends SyncService implements Syncable {
     public function pullDatabase(): bool {
         try {
             return $this->pull("sql");
-        } catch (AwsException $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
+        } catch (AwsException $exception) {
+            throw new ProviderException($this->createErrorMessage($exception));
         }
     }
 
@@ -38,9 +36,8 @@ class S3Service extends SyncService implements Syncable {
     public function pushDatabase(): bool {
         try {
             return $this->push("sql");
-        } catch (AwsException $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
+        } catch (AwsException $exception) {
+            throw new ProviderException($this->createErrorMessage($exception));
         }
     }
 
@@ -52,9 +49,8 @@ class S3Service extends SyncService implements Syncable {
     public function pullVolumes(): bool {
         try {
             return $this->pull("zip");
-        } catch (AwsException $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
+        } catch (AwsException $exception) {
+            throw new ProviderException($this->createErrorMessage($exception));
         }
     }
 
@@ -66,9 +62,8 @@ class S3Service extends SyncService implements Syncable {
     public function pushVolumes(): bool {
         try {
             return $this->push("zip");
-        } catch (AwsException $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            throw new ProviderException("AWS Error (Code: '" . $e->getAWSErrorCode() . "')");
+        } catch (AwsException $exception) {
+            throw new ProviderException($this->createErrorMessage($exception));
         }
     }
 
@@ -171,5 +166,26 @@ class S3Service extends SyncService implements Syncable {
             'version' => 'latest',
             'region'  => $s3RegionName
         ]);
+    }
+
+    private function createErrorMessage($exception) {
+        Craft::$app->getErrorHandler()->logException($exception);
+        $awsMessage = $exception->getAwsErrorMessage();
+        $message = "AWS Error";
+        if ($awsMessage) {
+            if (strpos($awsMessage, "The request signature we calculated does not match the signature you provided") !== false) {
+                $message = $message . ' (Check secret key)';
+            } else {
+                $message = $message . ' ("' . $awsMessage . '")';
+            }
+        } else {
+            $awsMessage = $exception->getMessage();
+            if (strpos($awsMessage, 'Are you sure you are using the correct region for this bucket') !== false) {
+                $message = $message . " (Check region credentials)";
+            } else {
+                $message = $message . " (Check credentials)";
+            }
+        }
+        return $message;
     }
 }
