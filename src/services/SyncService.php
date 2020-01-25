@@ -168,7 +168,7 @@ class SyncService extends Component
         // - Random string
         // - Version
         // - Extension
-        $regex = '/^(?:[a-zA-Z0-9]+)\_(?:([a-zA-Z]+)\_)?(\d{6}\_\d{6})\_(?:[a-zA-Z0-9]+)\_(?:[v0-9\.]+)\.(?:\w{2,10})$/';
+        $regex = '/^(?:[a-zA-Z0-9-]+)\_(?:([a-zA-Z]+)\_)?(\d{6}\_\d{6})\_(?:[a-zA-Z0-9]+)\_(?:[v0-9\.]+)\.(?:\w{2,10})$/';
 
         foreach ($filenames as $i=>$filename) {
             preg_match($regex, $filename, $matches);
