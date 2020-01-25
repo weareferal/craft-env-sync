@@ -46,7 +46,11 @@ class SyncService extends Component
 
         foreach ($volumes as $i=>$volume) {
             $tmpPath = $tmpDirName . DIRECTORY_SEPARATOR . $volume->handle;
-            FileHelper::copyDirectory($volume->rootPath, $tmpPath);
+            if (file_exists($volume->rootPath)) {
+                FileHelper::copyDirectory($volume->rootPath, $tmpPath);
+            } else {
+                Craft::info("Volume path doesn't exist: " . $volume->rootPath, "env-sync");
+            }
         }
 
         $zip = ZipHelper::recursiveZip($tmpDirName, $backupPath);
