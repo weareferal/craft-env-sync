@@ -70,7 +70,7 @@ class SyncService extends Component
         $backupPath = Craft::$app->getPath()->getDbBackupPath() . DIRECTORY_SEPARATOR . pathinfo($filename, PATHINFO_FILENAME) . '.zip';
         $tmpDir = Craft::$app->getPath()->getTempPath() . DIRECTORY_SEPARATOR . strtolower(StringHelper::randomString(10));
 
-        ZipHelper::unzip($path, $tmpDir);
+        ZipHelper::unzip($backupPath, $tmpDir);
 
         $folders = array_diff(scandir($tmpDir), array('.', '..'));
         foreach ($folders as $folder) {
