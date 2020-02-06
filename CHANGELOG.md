@@ -45,3 +45,40 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Change name to env-sync to avoid name collision with the plugin store
+
+## 1.0.7 - 2020-01-23
+
+### Changed
+
+- Fixed small typos in readme and license
+- Changed branding and updated versioning string to correspond with Craft plugin naming
+
+## 1.0.8 - 2020-01-24
+
+### Changed
+
+- Created custom database backup
+
+## 1.0.9 - 2020-01-25
+
+### Changed
+
+- Fixed issues with volumes
+
+## 1.0.10 - 2020-01-25
+
+### Changed
+
+- Improved error messages
+
+## 1.0.11 - 2020-01-25
+
+### Changed
+
+- Bugfixes
+
+## 1.0.12 - 2020-01-29
+
+### Changed
+
+- Fixed restore bug

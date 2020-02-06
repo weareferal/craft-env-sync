@@ -84,11 +84,4 @@ For volume assets backups, we simply create a versioned zip file containing the 
 
 If you are getting errors when you try to pull/push databases or assets, the first thing to check is the Craft logs at `storage/logs/web.log`. All errors should be logged here. The most likely issue is with your credentials, so double check that those are OK.
 
-## Roadmap
-
-Some things to do, and ideas for potential features:
-
-- Add a "test details" button in the settings page to immediately test S3 connection
-- Add more providers
-
-Brought to you by [Feral](https://weareferal.com)
+Brought to you by [Feral](https://weareferal.com). Any issues email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question)
