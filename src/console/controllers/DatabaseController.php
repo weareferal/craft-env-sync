@@ -29,6 +29,22 @@ use weareferal\sync\Sync;
 class DatabaseController extends Controller
 {
     /**
+     * Create a local database backup
+     */
+    public function actionCreateBackup()
+    {
+        try {
+            Sync::getInstance()->sync->createDatabaseBackup();
+        } catch (\Exception $e) {
+            Craft::$app->getErrorHandler()->logException($e);
+            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+        $this->stdout("Created local database backup" . PHP_EOL, Console::FG_GREEN);
+        return ExitCode::OK;
+    }
+
+    /**
      * Push local database backups to cloud
      */
     public function actionPush()
