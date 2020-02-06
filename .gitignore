@@ -3,10 +3,9 @@
 .env.sh
 .env
 
-composer.lock
-
 # COMPOSER
 /vendor
+composer.lock
 
 # BUILD FILES
 /bower_components/*

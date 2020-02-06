@@ -9,7 +9,7 @@ class PullDatabaseJob extends BaseJob
 {
     public function execute($queue)
     {
-        Sync::getInstance()->sync->actionPullDatabase();
+        Sync::getInstance()->sync->pullDatabase();
     }
 
     protected function defaultDescription()

@@ -66,9 +66,9 @@ AWS_BUCKET_PREFIX = "craft-backups/my-site"
 
 ## Usage
 
-![Craft Env Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
-
 ### Control Panel
+
+![Craft Env Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
 
 Once you have entered your settings variables you should be able to use the "sync" tab on the "utilities" section of the control panel.
 
