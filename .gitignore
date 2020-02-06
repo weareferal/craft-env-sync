@@ -3,6 +3,8 @@
 .env.sh
 .env
 
+composer.lock
+
 # COMPOSER
 /vendor
 

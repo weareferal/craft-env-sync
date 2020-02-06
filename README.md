@@ -68,9 +68,35 @@ AWS_BUCKET_PREFIX = "craft-backups/my-site"
 
 ![Craft Env Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
 
+### Control Panel
+
 Once you have entered your settings variables you should be able to use the "sync" tab on the "utilities" section of the control panel.
 
 There are two broad sections: one for the database and one for volume assets. Each section has four options to create a local backup, push that local backup to S3, pull all remote backups _from_ S3 and finally to restore a particular backup.
+
+### Command Line
+
+There are also console commands available for creating, pushing and pulling backups:
+
+```sh
+- env-sync/database                         Sync database backups
+    env-sync/database/create-backup         Create a local database backup
+    env-sync/database/pull                  Pull remote database backups from cloud
+    env-sync/database/push                  Push local database backups to cloud
+
+- env-sync/volumes                          Sync volumes backup
+    env-sync/volumes/create-backup          Create a local volumes backup
+    env-sync/volumes/pull                   Pull remote volume backups from cloud
+    env-sync/volumes/push                   Push local volume backups to cloud
+```
+
+For example:
+
+```sh
+./craft env-sync/database/create-backup
+```
+
+These commands can be used alongside cron or your deployment scripts to automatically/periodically create backups.
 
 ## Functionality
 
@@ -84,11 +110,4 @@ For volume assets backups, we simply create a versioned zip file containing the 
 
 If you are getting errors when you try to pull/push databases or assets, the first thing to check is the Craft logs at `storage/logs/web.log`. All errors should be logged here. The most likely issue is with your credentials, so double check that those are OK.
 
-## Roadmap
-
-Some things to do, and ideas for potential features:
-
-- Add a "test details" button in the settings page to immediately test S3 connection
-- Add more providers
-
-Brought to you by [Feral](https://weareferal.com)
+Brought to you by [Feral](https://weareferal.com). Any issues email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question)
