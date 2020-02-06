@@ -156,11 +156,18 @@ class SyncService extends Component
     }
 
     /**
-     * Create an array of human-readable select options from backup files
+     * Convert filenames into an array of date times and human readable labels
+     * 
+     * @param string[] A list of filenames
+     * @return array An array containing:
+     *  array[0] an index
+     *  array[1] the full filename
+     *  array[2] the datetime object
+     *  array[3] a human-readable label
      */
-    private function encodeSelectOptions($filenames): array {
-        $tmp = [];
-        $options = [];
+    private function parseDates($filenames) {
+        $dates = [];
+
         // Regex to capture/match:
         // - Site name
         // - Environment (optional and captured)
@@ -180,14 +187,24 @@ class SyncService extends Component
             if ($env) {
                 $label = $label  . ' (' . $env . ')';
             }
-            array_push($tmp, [$i, $filename, $datetime, $label]);
+            array_push($dates, [$i, $filename, $datetime, $label]);
         }
 
-        uasort($tmp, function($a, $b) {
+        uasort($dates, function($a, $b) {
             return $a[2] <=> $b[2];
         });
 
-        foreach ($tmp as $t) {
+        return $dates;
+    }
+
+    /**
+     * Create an array of human-readable select options from backup files
+     */
+    private function encodeSelectOptions($filenames): array {
+        $options = [];
+        $dates = $this->parseDates($filenames);
+
+        foreach ($dates as $t) {
             $options[$t[0]] = ["label"=>$t[3], "value"=>$t[1]];
         }
 
@@ -201,7 +218,7 @@ class SyncService extends Component
 
     }
 
-    /**
+    /**s
      * Factory method to return appropriate class depending on provider
      * setting
      * 
