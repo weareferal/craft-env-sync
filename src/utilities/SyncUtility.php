@@ -3,9 +3,8 @@
 
     use Craft;
     use craft\base\Utility;
-    use craft\web\assets\dbbackup\DbBackupAsset;
 
-    use weareferal\sync\assets\SyncAsset;
+    use weareferal\sync\assets\SyncUtilityAsset;
     use weareferal\sync\Sync;
 
     class SyncUtility extends Utility
@@ -28,7 +27,7 @@
         public static function contentHtml(): string
         {
             $view = Craft::$app->getView();
-            $view->registerAssetBundle(SyncAsset::class);
+            $view->registerAssetBundle(SyncUtilityAsset::class);
             $forms = [
                 ['create-database-backup', true],
                 ['create-volumes-backup', true],

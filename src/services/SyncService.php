@@ -195,6 +195,13 @@ class SyncService extends Component
     }
 
     /**
+     * Delete old backups
+     */
+    public function prune() {
+
+    }
+
+    /**
      * Factory method to return appropriate class depending on provider
      * setting
      * 
