@@ -9,7 +9,7 @@ class PullVolumesJob extends BaseJob
 {
     public function execute($queue)
     {
-        Sync::getInstance()->sync->actionPullVolumes();
+        Sync::getInstance()->sync->pullVolumes();
     }
 
     protected function defaultDescription()
