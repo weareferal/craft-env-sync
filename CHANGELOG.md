@@ -82,3 +82,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Fixed restore bug
+
+## 1.0.13 - 2020-02-06
+
+### Changed
+
+- Add missing console command
+- Updated docs
