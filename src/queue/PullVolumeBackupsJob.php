@@ -1,19 +1,20 @@
 <?php
+
 namespace weareferal\sync\queue;
 
 use craft\queue\BaseJob;
 
 use weareferal\sync\Sync;
 
-class PullDatabaseJob extends BaseJob
+class PullVolumeBackupsJob extends BaseJob
 {
     public function execute($queue)
     {
-        Sync::getInstance()->sync->pullDatabase();
+        Sync::getInstance()->sync->pullVolumeBackups();
     }
 
     protected function defaultDescription()
     {
-        return 'Pull remote database backups from cloud';
+        return 'Pull remote volume backups from cloud';
     }
 }

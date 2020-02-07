@@ -1,4 +1,5 @@
 <?php
+
 /**
  * test plugin for Craft CMS 3.x
  *
@@ -31,16 +32,16 @@ class VolumesController extends Controller
     /**
      * Create a local volumes backup
      */
-    public function actionCreateBackup()
+    public function actionCreate()
     {
         try {
-            Sync::getInstance()->sync->createVolumesBackup();
+            $path = Sync::getInstance()->sync->createVolumeBackup();
+            $this->stdout("Created local volume backup: " . $path . PHP_EOL, Console::FG_GREEN);
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Created local volumes backup" . PHP_EOL, Console::FG_GREEN);
         return ExitCode::OK;
     }
 
@@ -50,13 +51,16 @@ class VolumesController extends Controller
     public function actionPush()
     {
         try {
-            Sync::getInstance()->sync->pushVolumes();
+            $paths = Sync::getInstance()->sync->pushVolumeBackups();
+            $this->stdout("Pushed " . count($paths) . " volume backup(s) to the cloud" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Pushed volumes backups to the cloud" . PHP_EOL, Console::FG_GREEN);
         return ExitCode::OK;
     }
 
@@ -66,13 +70,39 @@ class VolumesController extends Controller
     public function actionPull()
     {
         try {
-            Sync::getInstance()->sync->pushVolumes();
+            $paths = Sync::getInstance()->sync->pullVolumeBackups();
+            $this->stdout("Pulled " . count($paths) . " volume backup(s) to the cloud" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Pulled volumes backups from the cloud" . PHP_EOL, Console::FG_GREEN);
+        return ExitCode::OK;
+    }
+
+    /**
+     * Prune volume backups
+     */
+    public function actionPrune()
+    {
+        try {
+            $paths = Sync::getInstance()->sync->pruneVolumeBackups();
+            $this->stdout("Pruned " . count($paths["local"]) . " local volume backup(s)" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths["local"] as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
+            $this->stdout("Pruned " . count($paths["remoate"]) . " remote volume backup(s)" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths["remote"] as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
+        } catch (\Exception $e) {
+            Craft::$app->getErrorHandler()->logException($e);
+            $this->stderr('rror: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
         return ExitCode::OK;
     }
 }

@@ -108,6 +108,14 @@ For volume assets backups, we simply create a versioned zip file containing the 
 
 ## Troubleshooting
 
-If you are getting errors when you try to pull/push databases or assets, the first thing to check is the Craft logs at `storage/logs/web.log`. All errors should be logged here. The most likely issue is with your credentials, so double check that those are OK.
+If you are getting errors while pushing/pulling/creating/restoring or pruning, the first thing to check is the Craft logs at `storage/logs/web.log`.
+
+### Credentials
+
+For pushing and pulling, the most likely issue is with your credentials, so double check that those are OK.
+
+### Memory limit creating volumes
+
+When you create a new volume backup, it's possible that your PHP memory limit will cause the process to crash. Make sure your memory limit is > than the volume folder you are trying to backup.
 
 Brought to you by [Feral](https://weareferal.com). Any issues email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question)

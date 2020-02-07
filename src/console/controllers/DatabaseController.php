@@ -1,4 +1,5 @@
 <?php
+
 /**
  * test plugin for Craft CMS 3.x
  *
@@ -31,16 +32,16 @@ class DatabaseController extends Controller
     /**
      * Create a local database backup
      */
-    public function actionCreateBackup()
+    public function actionCreate()
     {
         try {
-            Sync::getInstance()->sync->createDatabaseBackup();
+            $path = Sync::getInstance()->sync->createDatabaseBackups();
+            $this->stdout("Created local database backup: " . $path . PHP_EOL, Console::FG_GREEN);
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Created local database backup" . PHP_EOL, Console::FG_GREEN);
         return ExitCode::OK;
     }
 
@@ -50,13 +51,16 @@ class DatabaseController extends Controller
     public function actionPush()
     {
         try {
-            Sync::getInstance()->sync->pushDatabase();
+            $paths = Sync::getInstance()->sync->pushDatabaseBackups();
+            $this->stdout("Pushed " . count($paths) . " database backup(s) to the cloud" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Pushed database backups to the cloud" . PHP_EOL, Console::FG_GREEN);
         return ExitCode::OK;
     }
 
@@ -66,13 +70,39 @@ class DatabaseController extends Controller
     public function actionPull()
     {
         try {
-            Sync::getInstance()->sync->pullDatabase();
+            $paths = Sync::getInstance()->sync->pullDatabaseBackups();
+            $this->stdout("Pulled " . count($paths) . " database backup(s) to the cloud" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $this->stdout("Pulled database backups from the cloud" . PHP_EOL, Console::FG_GREEN);
         return ExitCode::OK;
-    }     
+    }
+
+    /**
+     * Prune database backups
+     */
+    public function actionPruneBackups()
+    {
+        try {
+            $paths = Sync::getInstance()->sync->pruneDatabaseBackups();
+            $this->stdout("Pruned " . count($paths["local"]) . " local database backup(s)" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths["local"] as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
+            $this->stdout("Pruned " . count($paths["remoate"]) . " remote database backup(s)" . PHP_EOL, Console::FG_GREEN);
+            foreach ($paths["remote"] as $path) {
+                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+            }
+        } catch (\Exception $e) {
+            Craft::$app->getErrorHandler()->logException($e);
+            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+        return ExitCode::OK;
+    }
 }

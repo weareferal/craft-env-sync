@@ -63,5 +63,3 @@ class Settings extends Model
         return true;
     }
 }
-
-?>
