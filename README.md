@@ -46,9 +46,13 @@ This plugin is inspired by [Andrew Welsch's `craft-scripts` library](https://git
 
 ## Configuration
 
+Configuration is done through the dedicated "Sync" settings panel. 
+
+### Provider
+
 ![Craft Env Sync Setting Screenshot](resources/img/settings-screenshot.png)
 
-Configuration is done through the dedicated "Sync" settings panel. The details entered here correspond to your AWS S3 account and bucket that you want to use for backups. It's recommended to set up a new IAM user that has programmatic access (meaning via a acces/secret key) to a private S3 bucket.
+The details entered here correspond to your AWS S3 account and bucket that you want to use for backups. It's recommended to set up a new IAM user that has programmatic access (meaning via a acces/secret key) to a private S3 bucket.
 
 Once you have set this bucket up, you can either enter your AWS S3 details directly into the setting page, or you can use environment variables via your `.env` file (this is the recommended approach as seen in the screenshot above). This latter approach is more portable and secure as it prevents any private access/secret key values being included in files that you might commit to Github. Furthermore is means these variables can be reused in other plugins etc.
 
@@ -95,12 +99,14 @@ There are also console commands available for creating, pushing and pulling back
 For example:
 
 ```sh
-./craft env-sync/database/create-backup
+./craft env-sync/database/create
 ```
 
 These commands can be used alongside cron or your deployment scripts to automatically/periodically create backups.
 
 ## Functionality
+
+![Image of backups](resources/img/backup-screenshot.png)
 
 All local backups are stored in the existing `storage/backups` folder that Craft uses for its own database backup script.
 
@@ -156,6 +162,8 @@ When enabled, backups will be pruned whenever a new backup is created via the Co
 ```
 
 Bear in mind these commands _will_ respect the settings. In other words, you won't be able to prune backups via the command line if the setting in the control panel is disabled.
+
+Also note that the `./craft env-sync/[database|volume]/create` command does not automatically run the `prune` command (unlike the control panel).
 
 ### Automating backups
 
