@@ -70,7 +70,7 @@ AWS_BUCKET_PREFIX = "craft-backups/my-site"
 
 ![Craft Env Sync Utilities Screenshot](resources/img/utilities-screenshot.png)
 
-Once you have entered your settings variables you should be able to use the "sync" tab on the "utilities" section of the control panel.
+Once you have entered your settings variables you should be able to use the *Sync* tab on the *Utilities* section of the control panel.
 
 There are two broad sections: one for the database and one for volume assets. Each section has four options to create a local backup, push that local backup to S3, pull all remote backups _from_ S3 and finally to restore a particular backup.
 
@@ -80,12 +80,14 @@ There are also console commands available for creating, pushing and pulling back
 
 ```sh
 - env-sync/database                         Sync database backups
-    env-sync/database/create-backup         Create a local database backup
+    env-sync/database/create                Create a local database backup
+    env-sync/database/prune                 Prune database backups
     env-sync/database/pull                  Pull remote database backups from cloud
     env-sync/database/push                  Push local database backups to cloud
 
 - env-sync/volumes                          Sync volumes backup
-    env-sync/volumes/create-backup          Create a local volumes backup
+    env-sync/volumes/create                 Create a local volumes backup
+    env-sync/volumes/prune                  Prune volume backups
     env-sync/volumes/pull                   Pull remote volume backups from cloud
     env-sync/volumes/push                   Push local volume backups to cloud
 ```
@@ -102,9 +104,63 @@ These commands can be used alongside cron or your deployment scripts to automati
 
 All local backups are stored in the existing `storage/backups` folder that Craft uses for its own database backup script.
 
-For database backups and restorations we use the existing Craft scripts - they are just included in our dashboard as an easier consolodated interface.
+For database backups and restorations we piggy-back on the existing Craft scripts - they are just included in our dashboard as an easier consolodated interface.
 
 For volume assets backups, we simply create a versioned zip file containing the handles of all volume assets currently saved in the system. Bear in mind if you have a large number of assets this process may take some time and take up a significant amount of storage.
+
+All backups have the following filename structure:
+
+```sh
+my_site_dev_200202_200020_yjrnz62yj4_v3.3.20.1.sql
+```
+
+Which includes:
+
+- Your site name
+- Your current environment
+- Date & time of backup
+- Random 10 character string
+- Craft version
+
+It's important not to manually rename these files as the plugin relies on this structure.
+
+### Queue
+
+You can choose to use the Craft queue to perform create, push and pull operations from the CP utilities section. To enable use of the queue, toggle the "Use Queue" setting.
+
+#### Control Panel errors
+
+When not using the queue, if there is an issue pulling/pushing a backup you will get feedback (an alert box). You won't get the same feedback when using the queue. Instead it will look like the operation has been successful. To see if the operation was actually successul you'll need to check the queue manually.
+
+#### CLI commands and the queue
+
+The CLI commands ignore the queue setting. In other words, they will always run synchrously. This is by design as it's likely you will want to see the results of these operations if they are part of your crontab or deployment script.
+
+### Deleting/Pruning old backups
+
+Env Sync support pruning/deleting of old backups. To enable 
+
+
+### Automating backups
+
+There is no built-in way to automate backups (periodic queue jobs are't something supported by the Craft queue). That said, it's very easy to automate backups either via cron or your own deployment script (if using Forge for example).
+
+#### Cron
+
+Here is an example daily cron entry to backup and prune daily at 01:00:
+
+```cron
+00 01 * * * /path/to/project/craft env-sync/databases/prune
+05 01 * * * /path/to/project/craft env-sync/databases/create
+10 01 * * * /path/to/project/craft env-sync/volumes/prune
+15 01 * * * /path/to/project/craft env-sync/volumes/create
+```
+
+### Providers
+
+The plugin has been built with the ability to add new providers relatively easily using a backend system. Currently the only provider available is AWS S3.
+
+If you require another provider, please leave an issue on Github.
 
 ## Troubleshooting
 
@@ -118,4 +174,6 @@ For pushing and pulling, the most likely issue is with your credentials, so doub
 
 When you create a new volume backup, it's possible that your PHP memory limit will cause the process to crash. Make sure your memory limit is > than the volume folder you are trying to backup.
 
-Brought to you by [Feral](https://weareferal.com). Any issues email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question)
+## Credits and support
+
+Brought to you by [Feral](https://weareferal.com). Any problems email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question) or leave an issue on Github.

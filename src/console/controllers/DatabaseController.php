@@ -86,7 +86,7 @@ class DatabaseController extends Controller
     /**
      * Prune database backups
      */
-    public function actionPruneBackups()
+    public function actionPrune()
     {
         try {
             $paths = Sync::getInstance()->sync->pruneDatabaseBackups();

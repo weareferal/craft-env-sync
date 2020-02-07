@@ -28,10 +28,10 @@ interface Syncable
  */
 class Backup
 {
-    public string $filename;
+    public $filename;
     public $datetime;
-    public string $label;
-    public string $env;
+    public $label;
+    public $env;
 
     // Regex to capture/match:
     // - Site name

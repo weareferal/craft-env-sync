@@ -94,7 +94,7 @@ class VolumesController extends Controller
             foreach ($paths["local"] as $path) {
                 $this->stdout($path . PHP_EOL, Console::FG_GREEN);
             }
-            $this->stdout("Pruned " . count($paths["remoate"]) . " remote volume backup(s)" . PHP_EOL, Console::FG_GREEN);
+            $this->stdout("Pruned " . count($paths["remote"]) . " remote volume backup(s)" . PHP_EOL, Console::FG_GREEN);
             foreach ($paths["remote"] as $path) {
                 $this->stdout($path . PHP_EOL, Console::FG_GREEN);
             }
