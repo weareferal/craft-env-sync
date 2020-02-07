@@ -22,7 +22,7 @@ To install the plugin, follow these instructions.
 2. Then tell Composer to load the plugin:
 
    ```sh
-   $ composer require weareferal/env-sync
+   composer require weareferal/env-sync
    ```
 
 3. In the Control Panel, go to Settings → Plugins and click the *Install* button for Craft Env Sync.
@@ -61,8 +61,8 @@ Here is an example portion of a  `.env` file:
 ```sh
 ...
 
-AWS_ACCESS_KEY = 
-AWS_SECRET_KEY = 
+AWS_ACCESS_KEY =
+AWS_SECRET_KEY =
 AWS_REGION = "us-west-2"
 AWS_BUCKET_NAME = "feral-backups"
 AWS_BUCKET_PREFIX = "craft-backups/my-site"
