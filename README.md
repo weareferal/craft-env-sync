@@ -42,7 +42,7 @@ This plugin uses AWS S3 (more providers to come soon) as the "single source of t
 
 For more information read our blog post on ["Syncing your DB and assets across environments in Craft 3"](https://weareferal.com/tldr/syncing-your-db-and-assets-across-environments-in-craft-3/) or get in touch at [timmy@weareferal.com](mailto:timmy@weareferal.com)
 
-This plugin is inspired by ![Andrew Welsch's `craft-scripts` library](https://github.com/nystudio107/craft-scripts) who also [has a great blog post on syncing you DB and assets in Craft](https://nystudio107.com/blog/database-asset-syncing-between-environments-in-craft-cms).
+This plugin is inspired by [Andrew Welsch's `craft-scripts` library](https://github.com/nystudio107/craft-scripts) who also [has a great blog post on syncing you DB and assets in Craft](https://nystudio107.com/blog/database-asset-syncing-between-environments-in-craft-cms).
 
 ## Configuration
 
@@ -104,9 +104,8 @@ These commands can be used alongside cron or your deployment scripts to automati
 
 All local backups are stored in the existing `storage/backups` folder that Craft uses for its own database backup script.
 
-For database backups and restorations we piggy-back on the existing Craft scripts - they are just included in our dashboard as an easier consolodated interface.
-
-For volume assets backups, we simply create a versioned zip file containing the handles of all volume assets currently saved in the system. Bear in mind if you have a large number of assets this process may take some time and take up a significant amount of storage.
+- Database backups are created in a similar manner to the native Craft backup utility. In fact, the plugin uses this script behind-the-scenes, it just uses a slightly different naming scheme.
+- For volume assets backups, we simply create a versioned zip file containing the handles of all volume assets currently saved in the system.
 
 All backups have the following filename structure:
 
@@ -123,6 +122,8 @@ Which includes:
 - Craft version
 
 It's important not to manually rename these files as the plugin relies on this structure.
+
+To create new backups and push/pull backups to the cloud you can use the "Sync" utility
 
 ### Queue
 

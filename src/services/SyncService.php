@@ -165,7 +165,7 @@ class SyncService extends Component
      * @param bool $dryRun Skip the actual deletion of files
      * @return array An array containing the deleted local and remote path 
      */
-    public function pruneDatabaseBackups($dryRun = true)
+    public function pruneDatabaseBackups($dryRun = false)
     {
         return $this->prune("sql", $dryRun);
     }
@@ -176,7 +176,7 @@ class SyncService extends Component
      * @param bool $dryRun Skip the actual deletion of files
      * @return array An array containing the deleted local and remote path 
      */
-    public function pruneVolumeBackups($dryRun = true)
+    public function pruneVolumeBackups($dryRun = false)
     {
         return $this->prune("zip", $dryRun);
     }

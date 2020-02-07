@@ -96,11 +96,11 @@ class VolumeController extends Controller
                 $paths = Sync::getInstance()->sync->pruneVolumeBackups();
                 $this->stdout("Pruned " . count($paths["local"]) . " local volume backup(s)" . PHP_EOL, Console::FG_GREEN);
                 foreach ($paths["local"] as $path) {
-                    $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+                    $this->stdout($path . PHP_EOL);
                 }
                 $this->stdout("Pruned " . count($paths["remote"]) . " remote volume backup(s)" . PHP_EOL, Console::FG_GREEN);
                 foreach ($paths["remote"] as $path) {
-                    $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+                    $this->stdout($path . PHP_EOL);
                 }
             } catch (\Exception $e) {
                 Craft::$app->getErrorHandler()->logException($e);
