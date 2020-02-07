@@ -154,6 +154,8 @@ Env Sync supports pruning/deleting of old backups. To enable this feature toggle
 - The earliest backups of the 6 most recent months
 - The earliest backups of the 3 most recent years
 
+Bear in mind that depending on how many backups you have, some of these might overlay. For example, a backup that is retained as part of the 4 most recent weekly backups might also be one of the 6 most recent monthly backups too.
+
 When enabled, backups will be pruned whenever a new backup is created via the Control Panel. Backups will be pruned independently. In other words, if you create a database backup, only the old database backups will be deleted, not the volume backups. You can also prune database or volume backups independently on the command line:
 
 ```sh
