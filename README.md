@@ -9,7 +9,7 @@ Backup and restore your database and volume assets across environments from the 
 - Craft CMS 3 or later on Linux or MacOS (untested on Windows as of yet)
 - A private AWS S3 bucket for backups
 
-## Installation
+## 💾 Installation
 
 To install the plugin, follow these instructions.
 
@@ -27,7 +27,7 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the *Install* button for Craft Env Sync.
 
-## Overview
+## 🏔 Overview
 
 Craft Env Sync is a plugin that makes it possible to sync your database and volume assets across numerous environments from the comfort of the Craft Control Panel. This makes it much easier to move your site from local development to staging and onto production.
 
@@ -44,7 +44,7 @@ For more information read our blog post on ["Syncing your DB and assets across e
 
 This plugin is inspired by [Andrew Welsch's `craft-scripts` library](https://github.com/nystudio107/craft-scripts) who also [has a great blog post on syncing you DB and assets in Craft](https://nystudio107.com/blog/database-asset-syncing-between-environments-in-craft-cms).
 
-## Configuration
+## 🔧 Configuration
 
 Configuration is done through the dedicated "Sync" settings panel. 
 
@@ -68,7 +68,7 @@ AWS_BUCKET_NAME = "feral-backups"
 AWS_BUCKET_PREFIX = "craft-backups/my-site"
 ```
 
-## Usage
+## 💻 Usage
 
 ### Control Panel
 
@@ -104,7 +104,7 @@ For example:
 
 These commands can be used alongside cron or your deployment scripts to automatically/periodically create backups.
 
-## Functionality
+## 📝 Functionality
 
 ![Image of backups](resources/img/backup-screenshot.png)
 
@@ -186,7 +186,7 @@ The plugin has been built with the ability to add new providers relatively easil
 
 If you require another provider, please leave an issue on Github.
 
-## Troubleshooting
+## 🚨 Troubleshooting
 
 If you are getting errors while pushing/pulling/creating/restoring or pruning, the first thing to check is the Craft logs at `storage/logs/web.log`.
 
@@ -198,6 +198,6 @@ For pushing and pulling, the most likely issue is with your credentials, so doub
 
 When you create a new volume backup, it's possible that your PHP memory limit will cause the process to crash. Make sure your memory limit is > than the volume folder you are trying to backup.
 
-## Credits and support
+## 📞 Credits and support
 
 Brought to you by [Feral](https://weareferal.com). Any problems email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question) or leave an issue on Github.
