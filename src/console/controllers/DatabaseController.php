@@ -35,7 +35,7 @@ class DatabaseController extends Controller
     public function actionCreate()
     {
         try {
-            $path = Sync::getInstance()->sync->createDatabaseBackups();
+            $path = Sync::getInstance()->sync->createDatabaseBackup();
             $this->stdout("Created local database backup: " . $path . PHP_EOL, Console::FG_GREEN);
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);

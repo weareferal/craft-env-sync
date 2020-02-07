@@ -10,7 +10,7 @@ class CreateDatabaseBackupJob extends BaseJob
 {
     public function execute($queue)
     {
-        Sync::getInstance()->sync->createDatabaseBackups();
+        Sync::getInstance()->sync->createDatabaseBackup();
     }
 
     protected function defaultDescription()

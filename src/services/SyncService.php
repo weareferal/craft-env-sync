@@ -81,7 +81,7 @@ class SyncService extends Component
      * 
      * @return string The path to the newly created backup
      */
-    public function createDatabaseBackups()
+    public function createDatabaseBackup()
     {
         $backupPath = $this->createBackupPath('sql');
         Craft::$app->getDb()->backupTo($backupPath);
@@ -278,10 +278,9 @@ class SyncService extends Component
     protected function getHTMLSelectOptions($filenames): array
     {
         $backups = $this->parseBackupFilenames($filenames);
-
         $options = [];
         foreach ($backups as $i => $backup) {
-            $options[$backup->$i] = [
+            $options[$i] = [
                 "label" => $backup->label,
                 "value" => $backup->filename
             ];

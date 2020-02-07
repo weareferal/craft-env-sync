@@ -38,7 +38,7 @@ class SyncController extends Controller
             if ($useQueue) {
                 Craft::$app->queue->push(new CreateDatabaseBackupJob());
             } else {
-                Sync::getInstance()->sync->createDatabaseBackups();
+                Sync::getInstance()->sync->createDatabaseBackup();
             }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
@@ -69,7 +69,7 @@ class SyncController extends Controller
             if ($useQueue) {
                 Craft::$app->queue->push(new CreateVolumeBackupJob());
             } else {
-                Sync::getInstance()->sync->createVolumeBackups();
+                Sync::getInstance()->sync->createVolumeBackup();
             }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
@@ -91,7 +91,7 @@ class SyncController extends Controller
             if (Sync::getInstance()->getSettings()->useQueue) {
                 Craft::$app->queue->push(new PushDatabaseBackupsJob());
             } else {
-                Sync::getInstance()->sync->pushDatabase();
+                Sync::getInstance()->sync->pushDatabaseBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -115,7 +115,7 @@ class SyncController extends Controller
             if (Sync::getInstance()->getSettings()->useQueue) {
                 Craft::$app->queue->push(new PullDatabaseBackupsJob());
             } else {
-                Sync::getInstance()->sync->pullDatabase();
+                Sync::getInstance()->sync->pullDatabaseBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -139,7 +139,7 @@ class SyncController extends Controller
             if (Sync::getInstance()->getSettings()->useQueue) {
                 Craft::$app->queue->push(new PushVolumeBackupsJob());
             } else {
-                Sync::getInstance()->sync->pushVolumes();
+                Sync::getInstance()->sync->pushVolumeBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -163,7 +163,7 @@ class SyncController extends Controller
             if (Sync::getInstance()->getSettings()->useQueue) {
                 Craft::$app->queue->push(new PullVolumeBackupsJob());
             } else {
-                Sync::getInstance()->sync->pullVolumes();
+                Sync::getInstance()->sync->pullVolumeBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
