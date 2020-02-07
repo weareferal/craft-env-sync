@@ -85,11 +85,11 @@ There are also console commands available for creating, pushing and pulling back
     env-sync/database/pull                  Pull remote database backups from cloud
     env-sync/database/push                  Push local database backups to cloud
 
-- env-sync/volumes                          Sync volumes backup
-    env-sync/volumes/create                 Create a local volumes backup
-    env-sync/volumes/prune                  Prune volume backups
-    env-sync/volumes/pull                   Pull remote volume backups from cloud
-    env-sync/volumes/push                   Push local volume backups to cloud
+- env-sync/volume                          Sync volumes backup
+    env-sync/volume/create                 Create a local volumes backup
+    env-sync/volume/prune                  Prune volume backups
+    env-sync/volume/pull                   Pull remote volume backups from cloud
+    env-sync/volume/push                   Push local volume backups to cloud
 ```
 
 For example:
@@ -138,8 +138,23 @@ The CLI commands ignore the queue setting. In other words, they will always run 
 
 ### Deleting/Pruning old backups
 
-Env Sync support pruning/deleting of old backups. To enable 
+![Pruning settings](resources/img/pruning-screenshot.png)
 
+Env Sync supports pruning/deleting of old backups. To enable this feature toggle the "Prune Backup" setting. When you toggle this setting you will see a number of inputs for controlling the number of backups to be retained for a number of backup periods: daily, weekly, monthly, yearly. By default Env Sync will keep:
+
+- The 14 most recent daily backups
+- The earliest backups of the 4 most recent weeks
+- The earliest backups of the 6 most recent months
+- The earliest backups of the 3 most recent years
+
+When enabled, backups will be pruned whenever a new backup is created via the Control Panel. Backups will be pruned independently. In other words, if you create a database backup, only the old database backups will be deleted, not the volume backups. You can also prune database or volume backups independently on the command line:
+
+```sh
+./craft env-sync/database/prune
+./craft env-sync/volume/prune
+```
+
+Bear in mind these commands _will_ respect the settings. In other words, you won't be able to prune backups via the command line if the setting in the control panel is disabled.
 
 ### Automating backups
 
@@ -150,10 +165,10 @@ There is no built-in way to automate backups (periodic queue jobs are't somethin
 Here is an example daily cron entry to backup and prune daily at 01:00:
 
 ```cron
-00 01 * * * /path/to/project/craft env-sync/databases/prune
-05 01 * * * /path/to/project/craft env-sync/databases/create
-10 01 * * * /path/to/project/craft env-sync/volumes/prune
-15 01 * * * /path/to/project/craft env-sync/volumes/create
+00 01 * * * /path/to/project/craft env-sync/database/prune
+05 01 * * * /path/to/project/craft env-sync/database/create
+10 01 * * * /path/to/project/craft env-sync/volume/prune
+15 01 * * * /path/to/project/craft env-sync/volume/create
 ```
 
 ### Providers

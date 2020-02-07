@@ -417,7 +417,7 @@ class SyncService extends Component
                 }
             }
 
-            Craft::debug('Deleting:' . PHP_EOL, 'env-sync');
+            Craft::debug('For Deletion:' . PHP_EOL, 'env-sync');
             foreach ($backups as $backup) {
                 if ($backup->delete) {
                     Craft::debug(" - " . $backup->datetime->format('Y-m-d') . PHP_EOL, 'env-sync');

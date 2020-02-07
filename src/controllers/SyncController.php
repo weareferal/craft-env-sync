@@ -26,7 +26,16 @@ class SyncController extends Controller
         $this->requirePermission('sync');
 
         try {
-            if (Sync::getInstance()->getSettings()->useQueue) {
+            $prune = Sync::getInstance()->getSettings()->prune;
+            $useQueue = Sync::getInstance()->getSettings()->useQueue;
+            if ($prune) {
+                if ($useQueue) {
+                    Craft::$app->queue->push(new PruneDatabaseBackupsJob());
+                } else {
+                    Sync::getInstance()->sync->pruneDatabaseBackups();
+                }   
+            }
+            if ($useQueue) {
                 Craft::$app->queue->push(new CreateDatabaseBackupJob());
             } else {
                 Sync::getInstance()->sync->createDatabaseBackups();
@@ -48,10 +57,19 @@ class SyncController extends Controller
         $this->requirePermission('sync');
 
         try {
-            if (Sync::getInstance()->getSettings()->useQueue) {
+            $prune = Sync::getInstance()->getSettings()->prune;
+            $useQueue = Sync::getInstance()->getSettings()->useQueue;
+            if ($prune) {
+                if ($useQueue) {
+                    Craft::$app->queue->push(new PruneVolumeBackupsJob());
+                } else {
+                    Sync::getInstance()->sync->pruneVolumeBackups();
+                }   
+            }
+            if ($useQueue) {
                 Craft::$app->queue->push(new CreateVolumeBackupJob());
             } else {
-                Sync::getInstance()->sync->createDatabaseBackups();
+                Sync::getInstance()->sync->createVolumeBackups();
             }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);

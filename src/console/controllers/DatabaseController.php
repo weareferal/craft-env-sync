@@ -88,21 +88,26 @@ class DatabaseController extends Controller
      */
     public function actionPrune()
     {
-        try {
-            $paths = Sync::getInstance()->sync->pruneDatabaseBackups();
-            $this->stdout("Pruned " . count($paths["local"]) . " local database backup(s)" . PHP_EOL, Console::FG_GREEN);
-            foreach ($paths["local"] as $path) {
-                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+        if (! Sync::getInstance()->getSettings()->prune) {
+            $this->stderr("Backup pruning disabled. Please enable via the Env Sync control panel settings" . PHP_EOL, Console::FG_YELLOW);
+            return ExitCode::CONFIG;
+        } else {
+            try {
+                $paths = Sync::getInstance()->sync->pruneDatabaseBackups();
+                $this->stdout("Pruned " . count($paths["local"]) . " local database backup(s)" . PHP_EOL, Console::FG_GREEN);
+                foreach ($paths["local"] as $path) {
+                    $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+                }
+                $this->stdout("Pruned " . count($paths["remote"]) . " remote database backup(s)" . PHP_EOL, Console::FG_GREEN);
+                foreach ($paths["remote"] as $path) {
+                    $this->stdout($path . PHP_EOL, Console::FG_GREEN);
+                }
+            } catch (\Exception $e) {
+                Craft::$app->getErrorHandler()->logException($e);
+                $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
+                return ExitCode::UNSPECIFIED_ERROR;
             }
-            $this->stdout("Pruned " . count($paths["remoate"]) . " remote database backup(s)" . PHP_EOL, Console::FG_GREEN);
-            foreach ($paths["remote"] as $path) {
-                $this->stdout($path . PHP_EOL, Console::FG_GREEN);
-            }
-        } catch (\Exception $e) {
-            Craft::$app->getErrorHandler()->logException($e);
-            $this->stderr('Error: ' . $e->getMessage() . PHP_EOL, Console::FG_RED);
-            return ExitCode::UNSPECIFIED_ERROR;
+            return ExitCode::OK;
         }
-        return ExitCode::OK;
     }
 }
