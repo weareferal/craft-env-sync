@@ -15,7 +15,7 @@ use RecursiveDirectoryIterator;
 class ZipHelper
 {
     public static function recursiveZip($srcPath, $dstPath)
-    {        
+    {
         $zip = new ZipArchive();
         $zip->open($dstPath, ZIPARCHIVE::CREATE);
         $srcPath = str_replace('\\', DIRECTORY_SEPARATOR, realpath($srcPath));
