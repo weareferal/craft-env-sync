@@ -12,7 +12,14 @@ class Settings extends Model
     public $s3RegionName;
     public $s3BucketName;
     public $s3BucketPrefix;
+
     public $useQueue = false;
+
+    public $prune = false;
+    public $pruneDailyCount = 14;
+    public $pruneWeeklyCount = 4;
+    public $pruneMonthlyCount = 6;
+    public $pruneYearlyCount = 3;
 
     public function rules(): array
     {
@@ -25,10 +32,20 @@ class Settings extends Model
                 ['cloudProvider', 's3AccessKey', 's3SecretKey', 's3BucketName', 's3RegionName', 's3BucketPrefix'],
                 'string'
             ],
-            [['useQueue'], 'boolean'],
+            [
+                ['useQueue', 'prune'],
+                'boolean'
+            ],
+            [
+                ['pruneDailyCount', 'pruneWeeklyCount', 'pruneMonthlyCount', 'pruneYearlyCount'],
+                'number'
+            ]
         ];
     }
 
+    /**
+     * 
+     */
     public function isConfigured(): bool
     {
         $vars = [
@@ -46,5 +63,3 @@ class Settings extends Model
         return true;
     }
 }
-
-?>

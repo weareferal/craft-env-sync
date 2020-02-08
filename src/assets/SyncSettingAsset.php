@@ -5,7 +5,7 @@ use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 
-class SyncAsset extends AssetBundle
+class SyncSettingAsset extends AssetBundle
 {
     public function init()
     {
@@ -14,10 +14,7 @@ class SyncAsset extends AssetBundle
             CpAsset::class,
         ];
         $this->js = [
-            'SyncUtility.js'
-        ];
-        $this->css = [
-            'SyncUtility.css',
+            'SyncSetting.js'
         ];
         parent::init();
     }
