@@ -89,3 +89,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Add missing console command
 - Updated docs
+
+## 1.1.0 - 2020-02-08
+
+### Changed
+
+- Added backup pruning
+- Bugfixes

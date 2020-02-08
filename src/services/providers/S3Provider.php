@@ -1,9 +1,8 @@
 <?php
+
 namespace weareferal\sync\services\providers;
 
-use Composer\Util\Platform;
 use Craft;
-use craft\errors\ShellCommandException;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
@@ -14,13 +13,15 @@ use weareferal\sync\exceptions\ProviderException;
 
 
 
-class S3Service extends SyncService implements Syncable {
+class S3Service extends SyncService implements Syncable
+{
     /**
      * Pull database backups from cloud to local backup folder
      * 
-     * @return bool If process was successful
+     * @return array An array of paths that were pulled
      */
-    public function pullDatabase(): bool {
+    public function pullDatabaseBackups(): array
+    {
         try {
             return $this->pull("sql");
         } catch (AwsException $exception) {
@@ -31,9 +32,10 @@ class S3Service extends SyncService implements Syncable {
     /**
      * Push local database backups from backup folder to S3
      * 
-     * @return bool If process was successful
+     * @return array An array of paths that were pushed
      */
-    public function pushDatabase(): bool {
+    public function pushDatabaseBackups(): array
+    {
         try {
             return $this->push("sql");
         } catch (AwsException $exception) {
@@ -44,9 +46,10 @@ class S3Service extends SyncService implements Syncable {
     /**
      * Pull local volume backups from cloud to local backup folder
      * 
-     * @return bool If process was successful
+     * @return array An array of paths that were pulled
      */
-    public function pullVolumes(): bool {
+    public function pullVolumeBackups(): array
+    {
         try {
             return $this->pull("zip");
         } catch (AwsException $exception) {
@@ -57,9 +60,10 @@ class S3Service extends SyncService implements Syncable {
     /**
      * Push local volume backups from backup folder to S3
      * 
-     * @return bool If process was successful
+     * @return array An array of paths that were pushed
      */
-    public function pushVolumes(): bool {
+    public function pushVolumeBackups(): array
+    {
         try {
             return $this->push("zip");
         } catch (AwsException $exception) {
@@ -68,12 +72,13 @@ class S3Service extends SyncService implements Syncable {
     }
 
     /**
-     * Underlying sync with AWS via AWS Cli
+     * Pull objects from remote S3 bucket to our backup folder
      * 
-     * @param $extension string The extension to pull from aws
-     * @return bool If process was successful
+     * @param string $extension The extension to target on AWS
+     * @return array An array of paths that were pulled
      */
-    private function pull($extension): bool {
+    private function pull($extension): array
+    {
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
         $s3BucketPrefix = Craft::parseEnv($settings->s3BucketPrefix);
@@ -81,69 +86,113 @@ class S3Service extends SyncService implements Syncable {
         $client = $this->getS3Client();
         $backupPath = Craft::$app->getPath()->getDbBackupPath();
 
+        $paths = [];
         $results = $client->getPaginator('ListObjectsV2', [
             'Bucket' => $s3BucketName,
             'Prefix' => $s3BucketPrefix,
             'MaxKeys' => 1000
         ]);
-
         foreach ($results as $result) {
-            if ($result['KeyCount'] > 0)  {
+            if ($result['KeyCount'] > 0) {
                 foreach ($result['Contents'] as $object) {
                     $key = $object['Key'];
                     $file_info = pathinfo($key);
                     if ($file_info['extension'] == $extension) {
                         $path = $backupPath . DIRECTORY_SEPARATOR . $file_info['basename'];
-                        if (! file_exists($path)) {
+                        if (!file_exists($path)) {
                             $client->getObject([
                                 'Bucket' => $s3BucketName,
                                 'Key' => $key,
                                 'SaveAs' => $path
                             ]);
+                            array_push($paths, $path);
                         } else {
-                            Craft::info("Skipping '" . $key . "' as file already exists locally", "env-sync");
+                            Craft::info("Skipping pull of '" . $key . "' as file already exists locally", "env-sync");
                         }
                     } else {
-                        Craft::info("Skipping '" . $key . "' as extension doesn't match", "env-sync");
+                        Craft::info("Skipping pull of '" . $key . "' as extension doesn't match", "env-sync");
                     }
                 }
             }
         }
-
-        return true;
+        return $paths;
     }
 
-    private function push($extension): bool {
-        $backupPath = Craft::$app->getPath()->getDbBackupPath();
+    /**
+     * Push all local backups of a particular extension to S3
+     * 
+     * @param string $extension The extension to target (sql or zip)
+     * @return array An array of paths that were pushed successfully
+     */
+    private function push($extension): array
+    {
         $settings = Sync::getInstance()->settings;
         $s3BucketName = Craft::parseEnv($settings->s3BucketName);
-
         $client = $this->getS3Client();
-        foreach (glob($backupPath . DIRECTORY_SEPARATOR . '*.' . $extension) as $path) {
-            $key = $this->getAWSKey($path);
+
+        $filenames = $this->getBackupFilenames($extension);
+        $backups = $this->parseBackupFilenames($filenames);
+        $paths = [];
+        foreach ($backups as $backup) {
+            $path = $backup->path();
+            $key = $this->getAWSKey($backup->filename);
             $exists = $client->doesObjectExist($s3BucketName, $key);
-            if (! $exists) {
+            if (!$exists) {
                 $client->putObject([
                     'Bucket' => $s3BucketName,
                     'Key' => $key,
                     'SourceFile' => $path
                 ]);
+                array_push($paths, $path);
             } else {
-                Craft::warning("File '" . $key . "' already exists on S3", "craft-sync");
+                Craft::warning("Skipping push of '" . $key . "' as file already exists on S3", "craft-sync");
             }
         }
-
-        return true;
+        return $paths;
     }
-    
+
     /**
+     * Delete remote backups
      * 
+     * @param array $backups An array of backups to delete
+     * @return array An array of paths that were deleted
      */
-    private function getAWSKey($path): string {
+    public function deleteRemoteBackups($backups): array
+    {
+        try {
+            $settings = Sync::getInstance()->settings;
+            $s3BucketName = Craft::parseEnv($settings->s3BucketName);
+            $client = $this->getS3Client();
+            $paths = [];
+            foreach ($backups as $backup) {
+                $key = $this->getAWSKey($backup->filename);
+                $exists = $client->doesObjectExist($s3BucketName, $key);
+                if ($exists) {
+                    $client->deleteObject([
+                        'Bucket' => $s3BucketName,
+                        'Key'    => $key
+                    ]);
+                    array_push($paths, $backup->path());
+                } else {
+                    Craft::warning("Could\'nt delete '" . $key . "' as it doesn't exist on S3", "craft-sync");
+                }
+            }
+            return $paths;
+        } catch (AwsException $exception) {
+            throw new ProviderException($this->createErrorMessage($exception));
+        }
+    }
+
+    /**
+     * Return the AWS key, including any prefix folders
+     * 
+     * @param string $filename The filename for the key
+     * @return string The prefixed key
+     */
+    private function getAWSKey($filename): string
+    {
         $settings = Sync::getInstance()->settings;
         $s3BucketPrefix = Craft::parseEnv($settings->s3BucketPrefix);
-
-        $filename = basename($path);
         if ($s3BucketPrefix) {
             return $s3BucketPrefix . DIRECTORY_SEPARATOR . $filename;
         }
@@ -151,9 +200,12 @@ class S3Service extends SyncService implements Syncable {
     }
 
     /**
+     * Return a useable S3 client object
      * 
+     * @return S3Client The S3 client object
      */
-    private function getS3Client() {
+    private function getS3Client(): S3Client
+    {
         $settings = Sync::getInstance()->settings;
         $s3AccessKey = Craft::parseEnv($settings->s3AccessKey);
         $s3SecretKey = Craft::parseEnv($settings->s3SecretKey);
@@ -168,7 +220,14 @@ class S3Service extends SyncService implements Syncable {
         ]);
     }
 
-    private function createErrorMessage($exception) {
+    /**
+     * Create a more user-friendly error message from AWS
+     * 
+     * @param AwsException $exception The exception
+     * @return string An client-friendly string
+     */
+    private function createErrorMessage($exception)
+    {
         Craft::$app->getErrorHandler()->logException($exception);
         $awsMessage = $exception->getAwsErrorMessage();
         $message = "AWS Error";

@@ -13,12 +13,8 @@ namespace weareferal\sync;
 
 use Craft;
 use craft\base\Plugin;
-use craft\web\UrlManager;
 use craft\services\Utilities;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
 use craft\events\RegisterComponentTypesEvent;
-use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
 use craft\services\UserPermissions;
 
@@ -27,6 +23,7 @@ use yii\base\Event;
 use weareferal\sync\utilities\SyncUtility;
 use weareferal\sync\models\Settings;
 use weareferal\sync\services\SyncService;
+use weareferal\sync\assets\SyncSettingAsset;
 
 
 class Sync extends Plugin
@@ -82,7 +79,10 @@ class Sync extends Plugin
 
     protected function settingsHtml(): string
     {
-        return Craft::$app->getView()->renderTemplate(
+        $view = Craft::$app->getView();
+        $view->registerAssetBundle(SyncSettingAsset::class);
+        $view->registerJs("new Craft.SyncSettings('main-form');");
+        return $view->renderTemplate(
             'env-sync/settings',
             [
                 'settings' => $this->getSettings()

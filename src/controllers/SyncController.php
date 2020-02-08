@@ -6,52 +6,82 @@ use Craft;
 use craft\web\Controller;
 
 use weareferal\sync\Sync;
-use weareferal\sync\queue\PullDatabaseJob;
-use weareferal\sync\queue\PullVolumesJob;
-use weareferal\sync\queue\PushDatabaseJob;
-use weareferal\sync\queue\PushVolumesJob;
+use weareferal\sync\queue\CreateDatabaseBackupJob;
+use weareferal\sync\queue\CreateVolumeBackupJob;
+use weareferal\sync\queue\PruneDatabaseBackupsJob;
+use weareferal\sync\queue\PruneVolumeBackupsJob;
+use weareferal\sync\queue\PullDatabaseBackupsJob;
+use weareferal\sync\queue\PullVolumeBackupsJob;
+use weareferal\sync\queue\PushDatabaseBackupsJob;
+use weareferal\sync\queue\PushVolumeBackupsJob;
 use weareferal\sync\exceptions\ProviderException;
 
 
 class SyncController extends Controller
 {
-    public function actionCreateDatabaseBackup ()
+    public function actionCreateDatabaseBackup()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
         $this->requirePermission('sync');
 
         try {
-            Sync::getInstance()->sync->createDatabaseBackup();
+            $prune = Sync::getInstance()->getSettings()->prune;
+            $useQueue = Sync::getInstance()->getSettings()->useQueue;
+            if ($prune) {
+                if ($useQueue) {
+                    Craft::$app->queue->push(new PruneDatabaseBackupsJob());
+                } else {
+                    Sync::getInstance()->sync->pruneDatabaseBackups();
+                }   
+            }
+            if ($useQueue) {
+                Craft::$app->queue->push(new CreateDatabaseBackupJob());
+            } else {
+                Sync::getInstance()->sync->createDatabaseBackup();
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error creating database backup'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
     }
 
-    public function actionCreateVolumesBackup ()
+    public function actionCreateVolumesBackup()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
         $this->requirePermission('sync');
 
         try {
-            Sync::getInstance()->sync->createVolumesBackup();
+            $prune = Sync::getInstance()->getSettings()->prune;
+            $useQueue = Sync::getInstance()->getSettings()->useQueue;
+            if ($prune) {
+                if ($useQueue) {
+                    Craft::$app->queue->push(new PruneVolumeBackupsJob());
+                } else {
+                    Sync::getInstance()->sync->pruneVolumeBackups();
+                }   
+            }
+            if ($useQueue) {
+                Craft::$app->queue->push(new CreateVolumeBackupJob());
+            } else {
+                Sync::getInstance()->sync->createVolumeBackup();
+            }
         } catch (\Exception $e) {
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error creating volume backup'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
     }
 
-    public function actionPushDatabase ()
+    public function actionPushDatabase()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
@@ -59,9 +89,9 @@ class SyncController extends Controller
 
         try {
             if (Sync::getInstance()->getSettings()->useQueue) {
-                Craft::$app->queue->push(new PushDatabaseJob());
+                Craft::$app->queue->push(new PushDatabaseBackupsJob());
             } else {
-                Sync::getInstance()->sync->pushDatabase();
+                Sync::getInstance()->sync->pushDatabaseBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -75,7 +105,7 @@ class SyncController extends Controller
         ]);
     }
 
-    public function actionPullDatabase ()
+    public function actionPullDatabase()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
@@ -83,9 +113,9 @@ class SyncController extends Controller
 
         try {
             if (Sync::getInstance()->getSettings()->useQueue) {
-                Craft::$app->queue->push(new PullDatabaseJob());
+                Craft::$app->queue->push(new PullDatabaseBackupsJob());
             } else {
-                Sync::getInstance()->sync->pullDatabase();
+                Sync::getInstance()->sync->pullDatabaseBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -99,7 +129,7 @@ class SyncController extends Controller
         ]);
     }
 
-    public function actionPushVolumes ()
+    public function actionPushVolumes()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
@@ -107,9 +137,9 @@ class SyncController extends Controller
 
         try {
             if (Sync::getInstance()->getSettings()->useQueue) {
-                Craft::$app->queue->push(new PushVolumesJob());
+                Craft::$app->queue->push(new PushVolumeBackupsJob());
             } else {
-                Sync::getInstance()->sync->pushVolumes();
+                Sync::getInstance()->sync->pushVolumeBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -117,13 +147,13 @@ class SyncController extends Controller
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pushing volume'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
     }
 
-    public function actionPullVolumes ()
+    public function actionPullVolumes()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
@@ -131,9 +161,9 @@ class SyncController extends Controller
 
         try {
             if (Sync::getInstance()->getSettings()->useQueue) {
-                Craft::$app->queue->push(new PullVolumesJob());
+                Craft::$app->queue->push(new PullVolumeBackupsJob());
             } else {
-                Sync::getInstance()->sync->pullVolumes();
+                Sync::getInstance()->sync->pullVolumeBackups();
             }
         } catch (ProviderException $e) {
             return $this->asErrorJson(Craft::t('env-sync', $e->getMessage()));
@@ -141,13 +171,13 @@ class SyncController extends Controller
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error pulling volume'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
     }
 
-    public function actionRestoreDatabase ()
+    public function actionRestoreDatabase()
     {
         try {
             $databaseName = Craft::$app->getRequest()->getRequiredBodyParam('database-name');
@@ -156,13 +186,13 @@ class SyncController extends Controller
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error restoring database'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
     }
 
-    public function actionRestoreVolumes ()
+    public function actionRestoreVolumes()
     {
         $this->requirePostRequest();
         $this->requireCpRequest();
@@ -175,7 +205,7 @@ class SyncController extends Controller
             Craft::$app->getErrorHandler()->logException($e);
             return $this->asErrorJson(Craft::t('env-sync', 'Error restoring assets'));
         }
-    
+
         return $this->asJson([
             "success" => true
         ]);
