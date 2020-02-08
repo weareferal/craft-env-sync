@@ -16,10 +16,6 @@ class ZipHelper
 {
     public static function recursiveZip($srcPath, $dstPath)
     {
-        Craft::info("Test A" . PHP_EOL, "env-sync");
-        Craft::info($srcPath . PHP_EOL, "env-sync");
-        Craft::info($dstPath . PHP_EOL, "env-sync");
-        
         $zip = new ZipArchive();
         $zip->open($dstPath, ZIPARCHIVE::CREATE);
         $srcPath = str_replace('\\', DIRECTORY_SEPARATOR, realpath($srcPath));
