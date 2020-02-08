@@ -8,43 +8,51 @@ use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 
 /**
+ * Zip file
+ * 
  * https://stackoverflow.com/a/1334949
  */
 class ZipHelper
 {
-    public static function recursiveZip($source, $dest)
+    public static function recursiveZip($srcPath, $dstPath)
     {
+        Craft::info("Test A" . PHP_EOL, "env-sync");
+        Craft::info($srcPath . PHP_EOL, "env-sync");
+        Craft::info($dstPath . PHP_EOL, "env-sync");
+        
         $zip = new ZipArchive();
-        $zip->open($dest, ZIPARCHIVE::CREATE);
-        $source = str_replace('\\', '/', realpath($source));
+        $zip->open($dstPath, ZIPARCHIVE::CREATE);
+        $srcPath = str_replace('\\', DIRECTORY_SEPARATOR, realpath($srcPath));
 
-        if (is_dir($source) === true) {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
-            foreach ($files as $file) {
-                $file = str_replace('\\', '/', $file);
+        if (is_dir($srcPath)) {
+            $paths = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($srcPath), RecursiveIteratorIterator::SELF_FIRST);
+            foreach ($paths as $path) {
+                $path = str_replace('\\', DIRECTORY_SEPARATOR, $path);
                 // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..'))) {
+                if (in_array(substr($path, strrpos($path, DIRECTORY_SEPARATOR) + 1), array('.', '..'))) {
                     continue;
                 }
-                $file = realpath($file);
-                if (is_dir($file) === true) {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
-                } else if (is_file($file) === true) {
-                    $zip->addFile($file, str_replace($source . '/', '', $file));
+                $path = realpath($path);
+                if (is_dir($path)) {
+                    $relPath = str_replace($srcPath . DIRECTORY_SEPARATOR, '', $path . DIRECTORY_SEPARATOR);
+                    $zip->addEmptyDir($relPath);
+                } else if (is_file($path)) {
+                    $relPath = str_replace($srcPath . DIRECTORY_SEPARATOR, '', $path);
+                    $zip->addFile($path, $relPath);
                 }
             }
-        } else if (is_file($source) === true) {
-            $zip->addFromString(basename($source), file_get_contents($source));
+        } else if (is_file($srcPath)) {
+            $zip->addFromString(basename($srcPath), file_get_contents($srcPath));
         }
 
         return $zip->close();
     }
 
-    public static function unzip($source, $dest)
+    public static function unzip($srcPath, $dstPath)
     {
         $zip = new ZipArchive();
-        $zip->open($source);
-        $zip->extractTo($dest);
+        $zip->open($srcPath);
+        $zip->extractTo($dstPath);
         return $zip->close();
     }
 }
