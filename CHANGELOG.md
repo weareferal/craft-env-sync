@@ -96,3 +96,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added backup pruning
 - Bugfixes
+
+## 1.1.1 - 2020-02-08
+
+### Changed
+
+- Updated regex to allow for environment labels with hyphens (issue #24)
