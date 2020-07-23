@@ -202,4 +202,4 @@ When you create a new volume backup, it's possible that your PHP memory limit wi
 
 ## 📞 Credits and support
 
-Brought to you by [Feral](https://weareferal.com). Any problems email [timmy@weareferal.com](mailto:timmy@weareferal.com?subject=Craft%20Env%20Sync%20Question) or leave an issue on Github.
+Brought to you by [Feral](https://weareferal.com).
